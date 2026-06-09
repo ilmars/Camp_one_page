@@ -43,6 +43,20 @@ const CONFIG = {
     "Sestdiena":   { "datums": "26.06", "piezime": "Noslēguma diena" }
   },
 
+  /* ===== Programmu apraksti (informatīvā sadaļa zem dienas plāna) =====
+   * Vari brīvi mainīt tekstus, pievienot vai dzēst grupas. */
+  "programmuVirsraksts": "Programmas bērniem un jauniešiem",
+  "programmas": [
+    {
+      "virsraksts": "Svētdienas skola (3–11 g.)",
+      "apraksts": "Kamēr pieaugušie ir dievkalpojumā, bērni savā programmā mācās Bībeles stāstus, dzied, spēlējas un darbojas radošajās darbnīcās. Bērnus sagaida pieredzējuši svētdienas skolas skolotāji. Bērni pulcējas pirms katra rīta un vakara dievkalpojuma."
+    },
+    {
+      "virsraksts": "Jaunieši (no 12 g.)",
+      "apraksts": "Jauniešiem ir sava programma ar slavēšanu, sarunām par dzīvi un ticību, sportu un vakara aktivitātēm. Dievkalpojumu laikā jaunieši pulcējas atsevišķi, bet ēdienreizēs un brīvajā laikā visi ir kopā ar ģimenēm."
+    }
+  ],
+
   /* ===== Bildes ===== */
   "heroBilde": "https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?auto=format&fit=crop&w=1600&q=80",
   "galerijasVirsraksts": "Mirkļi no nometnes",
