@@ -6,9 +6,17 @@
 const CONFIG = {
 
   /* ===== Pamatinformācija ===== */
-  "nosaukums": "Draudzes ģimeņu nometne",
+  "nosaukums": "Draudzes nometne",
   "datumi": "21.–26. jūnijs",
-  "vieta": "Nometnes vieta",
+  "vieta": "Norkalni",
+
+  /* Nometnes logo virsraksta zonā (attēla adrese, piem., "logo.png" vai pilns URL).
+   * Tukšs "" = logo nerāda, ir tikai teksta virsraksts.
+   * Ja gribi TIKAI logo bez teksta, ieliec "heroVirsraksts": "" —
+   * nosaukums tāpat paliks lapas cilnē un kājenē.
+   * Ar "heroVirsraksts" vari hero zonā rādīt arī citu tekstu nekā "nosaukums". */
+  "logo": "",
+  "heroVirsraksts": "Draudzes nometne",
 
   /* Grupu žetoni lapas augšā */
   "grupas": ["Pieaugušie", "Jaunieši (no 12 g.)", "Svētdienas skola (3–11 g.)"],
@@ -54,5 +62,5 @@ const CONFIG = {
   ],
 
   /* ===== Kājene (nosaukums tiek pielikts automātiski priekšā) ===== */
-  "kajene": "21.–26. jūnijs · kopā 10 dievkalpojumi"
+  "kajene": "21.–26. jūnijs, Norkalni | Draudzes nometne 2026"
 };

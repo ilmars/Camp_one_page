@@ -31,6 +31,7 @@ body{background:var(--bg);color:var(--ink);font-family:'Inter',system-ui,-apple-
 .hero-overlay{position:absolute;inset:0;background:linear-gradient(180deg,rgba(13,28,18,.35),rgba(13,28,18,.78))}
 .hero-content{position:relative;padding:88px 0 52px;color:#fff}
 .kicker{font-size:.8rem;letter-spacing:.22em;text-transform:uppercase;font-weight:700;color:#9fe0b8;margin-bottom:12px}
+.hero-logo{display:block;max-height:110px;max-width:min(70%,420px);margin-bottom:14px}
 h1{font-size:clamp(2.3rem,7vw,3.8rem);font-weight:900;line-height:1.05;letter-spacing:-.02em;max-width:12ch}
 .loc{margin-top:14px;font-size:1rem;color:rgba(255,255,255,.85);font-weight:600}
 .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:22px}
@@ -113,6 +114,7 @@ footer b{color:var(--ink)}
   <div class="hero-overlay"></div>
   <div class="wrap hero-content">
     <div class="kicker" id="kicker"></div>
+    <img class="hero-logo" id="logo" alt="" hidden>
     <h1 id="nosaukums"></h1>
     <div class="loc" id="vieta"></div>
     <div class="chips" id="grupas"></div>
@@ -169,7 +171,18 @@ function renderStatic(){
     heroImg.style.display = 'none';
   }
   document.getElementById('kicker').textContent = C.datumi || '';
-  document.getElementById('nosaukums').textContent = C.nosaukums || '';
+  const logo = document.getElementById('logo');
+  if (C.logo) {
+    logo.onerror = () => { logo.hidden = true; };
+    logo.alt = C.nosaukums || '';
+    logo.src = C.logo;
+    logo.hidden = false;
+  }
+  // Hero virsraksts: "heroVirsraksts" lauks, ja tāds ir (var būt tukšs = bez teksta); citādi "nosaukums".
+  const heroText = ('heroVirsraksts' in C) ? C.heroVirsraksts : C.nosaukums;
+  const h1 = document.getElementById('nosaukums');
+  h1.textContent = heroText || '';
+  if (!heroText) h1.hidden = true;
   document.getElementById('vieta').innerHTML = '<svg class="icon"><use href="#i-pin"/></svg> ' + esc(C.vieta || '');
   document.getElementById('grupas').innerHTML = PARALLEL.map(g => '<span class="chip">' + esc(g) + '</span>').join('');
   document.getElementById('piezime').textContent = C.piezime || '';
