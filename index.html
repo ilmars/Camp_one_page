@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Draudzes ģimeņu nometne · 21.–26. jūnijs</title>
+<title>Draudzes ģimeņu nometne</title>
 <meta name="description" content="Draudzes ģimeņu nometnes programma: dievkalpojumi, svētdienas skola, jauniešu un brīvā laika aktivitātes.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -31,7 +31,7 @@ body{background:var(--bg);color:var(--ink);font-family:'Inter',system-ui,-apple-
 .hero-overlay{position:absolute;inset:0;background:linear-gradient(180deg,rgba(13,28,18,.35),rgba(13,28,18,.78))}
 .hero-content{position:relative;padding:88px 0 52px;color:#fff}
 .kicker{font-size:.8rem;letter-spacing:.22em;text-transform:uppercase;font-weight:700;color:#9fe0b8;margin-bottom:12px}
-h1{font-size:clamp(2.3rem,7vw,3.8rem);font-weight:900;line-height:1.05;letter-spacing:-.02em}
+h1{font-size:clamp(2.3rem,7vw,3.8rem);font-weight:900;line-height:1.05;letter-spacing:-.02em;max-width:12ch}
 .loc{margin-top:14px;font-size:1rem;color:rgba(255,255,255,.85);font-weight:600}
 .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:22px}
 .chip{background:rgba(255,255,255,.13);backdrop-filter:blur(4px);border:1px solid rgba(255,255,255,.25);border-radius:999px;padding:8px 15px;font-size:.85rem;font-weight:600}
@@ -108,18 +108,14 @@ footer b{color:var(--ink)}
 </svg>
 
 <header class="hero">
-  <img class="hero-img" src="https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?auto=format&fit=crop&w=1600&q=80" alt="" onerror="this.style.display='none'">
+  <img class="hero-img" id="hero-img" src="" alt="" onerror="this.style.display='none'">
   <div class="hero-overlay"></div>
   <div class="wrap hero-content">
-    <div class="kicker">21.–26. jūnijs</div>
-    <h1>Draudzes<br>ģimeņu nometne</h1>
-    <div class="loc"><svg class="icon"><use href="#i-pin"/></svg> Nometnes vieta</div>
-    <div class="chips">
-      <span class="chip">Pieaugušie</span>
-      <span class="chip">Jaunieši (no 12 g.)</span>
-      <span class="chip">Svētdienas skola (3–11 g.)</span>
-    </div>
-    <p class="hero-note">Dievkalpojumi visām trim grupām notiek paralēli — katrai grupai sava programma.</p>
+    <div class="kicker" id="kicker"></div>
+    <h1 id="nosaukums"></h1>
+    <div class="loc" id="vieta"></div>
+    <div class="chips" id="grupas"></div>
+    <p class="hero-note" id="piezime"></p>
   </div>
 </header>
 
@@ -130,52 +126,64 @@ footer b{color:var(--ink)}
 <main class="wrap sched" id="sched"></main>
 
 <section class="wrap sec">
-  <h2>Mirkļi no nometnes</h2>
-  <div class="gallery">
-    <img src="https://images.unsplash.com/photo-1441974231531-c6227db76b6e?auto=format&fit=crop&w=800&q=80" alt="Mežs" onerror="this.style.visibility='hidden'">
-    <img src="https://images.unsplash.com/photo-1470770841072-f978cf4d019e?auto=format&fit=crop&w=800&q=80" alt="Ezers" onerror="this.style.visibility='hidden'">
-    <img src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?auto=format&fit=crop&w=800&q=80" alt="Kalni" onerror="this.style.visibility='hidden'">
-  </div>
-  <!-- Ielīmē sava foto albuma (piem., Google Photos) adresi href vietā -->
-  <a class="more-link" href="#"><svg class="icon"><use href="#i-camera"/></svg> Visas nometnes bildes <svg class="icon"><use href="#i-arrow"/></svg></a>
+  <h2 id="galerijas-virsraksts"></h2>
+  <div class="gallery" id="galerija"></div>
+  <a class="more-link" id="foto-saite" href="#"><svg class="icon"><use href="#i-camera"/></svg> <span id="foto-saites-teksts"></span> <svg class="icon"><use href="#i-arrow"/></svg></a>
 </section>
 
-<section class="wrap sec" id="kontakti">
-  <h2>Kontakti</h2>
-  <div class="contacts">
-    <div class="contact"><span class="role">Nometnes vadītājs</span><b>Vārds Uzvārds</b><a href="tel:+37120000000"><svg class="icon"><use href="#i-phone"/></svg> +371 20 000 000</a></div>
-    <div class="contact"><span class="role">Svētdienas skola</span><b>Vārds Uzvārds</b><a href="tel:+37120000000"><svg class="icon"><use href="#i-phone"/></svg> +371 20 000 000</a></div>
-    <div class="contact"><span class="role">Jaunieši</span><b>Vārds Uzvārds</b><a href="tel:+37120000000"><svg class="icon"><use href="#i-phone"/></svg> +371 20 000 000</a></div>
-    <div class="contact"><span class="role">Saimniecības jautājumi</span><b>Vārds Uzvārds</b><a href="tel:+37120000000"><svg class="icon"><use href="#i-phone"/></svg> +371 20 000 000</a></div>
-  </div>
+<section class="wrap sec" id="kontakti-sec">
+  <h2 id="kontaktu-virsraksts"></h2>
+  <div class="contacts" id="kontakti"></div>
 </section>
 
 <footer>
-  <div class="wrap"><b>Draudzes ģimeņu nometne</b> · 21.–26. jūnijs · kopā 10 dievkalpojumi</div>
+  <div class="wrap" id="kajene"></div>
 </footer>
 
+<!-- Visa aizpildāmā informācija un teksti ir failā config.js -->
+<script src="config.js"></script>
 <script>
-/*
- * DIENAS PLĀNS NO GOOGLE IZKLĀJLAPAS
- * 1) Izveido Google izklājlapu ar kolonnām: Diena,Laiks,Nosaukums,Apraksts,Grupa
- *    (paraugs repo failā dienas-plans-template.csv — ielīmē to izklājlapā).
- * 2) Fails → Kopīgot → Publicēt tīmeklī → izvēlies lapu un formātu CSV.
- * 3) Nokopē iegūto adresi un ielīmē šeit starp pēdiņām:
- */
-const SHEET_CSV_URL = '';
+const C = (typeof CONFIG !== 'undefined') ? CONFIG : {};
 
-const PARALLEL = ['Pieaugušie', 'Jaunieši (no 12 g.)', 'Svētdienas skola (3–11 g.)'];
+const PARALLEL = C.grupas || [];
 const CAT_LABELS = ['Bērniem', 'Jauniešiem', 'Vīriem', 'Sievietēm'];
+const DAY_META = {};
+for (const [name, info] of Object.entries(C.dienas || {})) {
+  DAY_META[name] = {date: info.datums || '', sub: info.piezime, d: parseInt(info.datums, 10) || 0,
+                    m: parseInt((info.datums || '').split('.')[1], 10) || 0};
+}
 
-const DAY_META = {
-  'Pirmdiena':   {date:'21.06', d:21, sub:'Ierašanās diena'},
-  'Otrdiena':    {date:'22.06', d:22},
-  'Trešdiena':   {date:'23.06', d:23},
-  'Ceturtdiena': {date:'24.06', d:24},
-  'Piektdiena':  {date:'25.06', d:25},
-  'Sestdiena':   {date:'26.06', d:26, sub:'Noslēguma diena'}
-};
+function esc(s){
+  return String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+}
 
+/* ===== Statiskās sadaļas no konfigurācijas ===== */
+function renderStatic(){
+  document.title = (C.nosaukums || 'Nometne') + (C.datumi ? ' · ' + C.datumi : '');
+  document.getElementById('hero-img').src = C.heroBilde || '';
+  document.getElementById('kicker').textContent = C.datumi || '';
+  document.getElementById('nosaukums').textContent = C.nosaukums || '';
+  document.getElementById('vieta').innerHTML = '<svg class="icon"><use href="#i-pin"/></svg> ' + esc(C.vieta || '');
+  document.getElementById('grupas').innerHTML = PARALLEL.map(g => '<span class="chip">' + esc(g) + '</span>').join('');
+  document.getElementById('piezime').textContent = C.piezime || '';
+
+  document.getElementById('galerijas-virsraksts').textContent = C.galerijasVirsraksts || '';
+  document.getElementById('galerija').innerHTML = (C.galerija || []).map(url =>
+    '<img src="' + esc(url) + '" alt="" onerror="this.style.visibility=\'hidden\'">').join('');
+  document.getElementById('foto-saite').href = C.fotoAlbumaSaite || '#';
+  document.getElementById('foto-saites-teksts').textContent = C.fotoSaitesTeksts || '';
+
+  document.getElementById('kontaktu-virsraksts').textContent = C.kontaktuVirsraksts || '';
+  document.getElementById('kontakti').innerHTML = (C.kontakti || []).map(k =>
+    '<div class="contact"><span class="role">' + esc(k.loma) + '</span><b>' + esc(k.vards) + '</b>' +
+    '<a href="tel:' + esc((k.telefons || '').replace(/\s/g, '')) + '"><svg class="icon"><use href="#i-phone"/></svg> ' + esc(k.telefons) + '</a></div>'
+  ).join('');
+
+  document.getElementById('kajene').innerHTML = '<b>' + esc(C.nosaukums || '') + '</b>' +
+    (C.kajene ? ' · ' + esc(C.kajene) : '');
+}
+
+/* ===== Iebūvētais dienas plāns (rezerve, ja izklājlapa nav pieejama) ===== */
 function fullDay(){
   return [
     {time:'8:30',  title:'Rīta lūgšanas un brokastis', desc:'Visiem kopā'},
@@ -211,6 +219,7 @@ const DEFAULT_DAYS = [
   ]}
 ];
 
+/* ===== Plāna ielāde no Google izklājlapas CSV ===== */
 function parseCSV(text){
   const rows = []; let row = [], cell = '', q = false;
   for (let i = 0; i < text.length; i++) {
@@ -250,10 +259,7 @@ function buildDays(rows){
   return days;
 }
 
-function esc(s){
-  return String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-}
-
+/* ===== Attēlošana ===== */
 let DAYS = DEFAULT_DAYS;
 const nav = document.getElementById('daynav');
 const sched = document.getElementById('sched');
@@ -292,20 +298,17 @@ function renderNav(){
 }
 
 function autoSelect(){
-  // Nometnes laikā (21.–26. jūnijs, gads netiek ņemts vērā) atver šodienu; citādi pirmo dienu.
+  // Nometnes laikā (pēc dienas un mēneša, gads netiek ņemts vērā) atver šodienu; citādi pirmo dienu.
   const now = new Date();
-  let start = 0;
-  if (now.getMonth() === 5) {
-    const idx = DAYS.findIndex(d => d.d === now.getDate());
-    if (idx >= 0) start = idx;
-  }
-  renderDay(start);
+  let start = DAYS.findIndex(d => d.d === now.getDate() && d.m === now.getMonth() + 1);
+  renderDay(start >= 0 ? start : 0);
 }
 
 async function init(){
-  if (SHEET_CSV_URL) {
+  renderStatic();
+  if (C.sheetCsvUrl) {
     try {
-      const res = await fetch(SHEET_CSV_URL);
+      const res = await fetch(C.sheetCsvUrl);
       if (res.ok) {
         const built = buildDays(parseCSV(await res.text()));
         if (built.length) DAYS = built;

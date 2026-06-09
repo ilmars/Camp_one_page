@@ -127,3 +127,18 @@ nemainot HTML struktūru.
 5. **Kontaktu sadaļa:** kartītes ar atbildīgajām personām — loma, vārds
    (vietturis), telefons kā `tel:` saite. Sākotnējās lomas: nometnes
    vadītājs, svētdienas skola, jaunieši, saimniecības jautājumi.
+
+## 3. iterācija (2026-06-09): konfigurācija atsevišķā failā
+
+Visa aizpildāmā informācija un teksti pārcelti uz `config.js` (JSON objekts
+`CONFIG` ar latviskiem laukiem) — `index.html` vairs nav jārediģē. Saturs:
+nosaukums, datumi, vieta, grupu žetoni, piezīme, `sheetCsvUrl`, dienu
+datumi/piezīmes, hero bilde, galerijas virsraksts un bildes, foto saites
+teksts un adrese, kontaktu virsraksts un saraksts, kājenes teksts (nosaukums
+pievienojas automātiski).
+
+Tīrs `.json` fails apzināti netiek lietots: atverot lapu kā `file://`,
+pārlūks `fetch('config.json')` bloķē (CORS), bet `<script src="config.js">`
+strādā gan no faila, gan no servera. Ja `config.js` trūkst, lapa nenokrīt —
+attēlo tukšas vērtības un iebūvēto plānu. Dienas automātiskā izvēle tagad
+salīdzina gan dienu, gan mēnesi no `dienas` datumiem.
