@@ -23,8 +23,10 @@ const CONFIG = {
   "piezime": "Dievkalpojumi visām trim grupām notiek paralēli — katrai grupai sava programma.",
 
   /* ===== Dienas plāns no Google izklājlapas =====
-   * 1) Izveido Google izklājlapu ar kolonnām: Diena,Laiks,Nosaukums,Apraksts,Grupa
+   * 1) Izveido Google izklājlapu ar kolonnām: Diena,Laiks,Nosaukums,Apraksts,Grupa,YouTube
    *    (paraugs failā dienas-plans-template.csv — importē to izklājlapā).
+   *    YouTube kolonnā vari ielikt tiešraides vai ieraksta saiti —
+   *    pie notikuma parādīsies poga "Skatīties YouTube".
    * 2) Izklājlapā: Fails → Kopīgot → Publicēt tīmeklī → formāts CSV.
    * 3) Nokopēto adresi ielīmē šeit starp pēdiņām.
    * Ja adrese tukša vai neielādējas, lapa rāda iebūvēto plānu.
@@ -62,5 +64,5 @@ const CONFIG = {
   ],
 
   /* ===== Kājene (nosaukums tiek pielikts automātiski priekšā) ===== */
-  "kajene": "21.–26. jūnijs, Norkalni | Draudzes nometne 2026"
+  "kajene": "21.–26. jūnijs, Norkalni | Dieva Mājas 2026"
 };
