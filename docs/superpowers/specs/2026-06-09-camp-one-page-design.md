@@ -65,7 +65,8 @@ reģistrācijas — tikai informācija.
 - 8:30 Rīta lūgšanas un brokastis
 - 10:00 Rīta dievkalpojums (paralēli: pieaugušie / jaunieši / svētdienas skola)
 - 13:00 Pusdienas
-- 14:00 Dienas aktivitāte (brīvais laiks — spēles, sports)
+- 14:00 Dienas aktivitātes pa kategorijām (paralēli): bērniem, jauniešiem,
+  vīriem, sievietēm — katra kategorija ar savu krāsainu žetonu kartītē
 - 17:30 Vakariņas
 - 18:30 Vakara dievkalpojums (paralēli: pieaugušie / jaunieši / svētdienas skola)
 - 22:00 Vakara uzkodas
@@ -77,8 +78,11 @@ reģistrācijas — tikai informācija.
 
 Kopā: 1 + 4×2 + 1 = **10 dievkalpojumi** (apstiprināts ar lietotāju).
 
-Aktivitāšu nosaukumi vispārīgi ("Dienas aktivitāte", "Nakts aktivitāte") —
-konkrēto saturu lietotājs pierakstīs pats.
+Dienas aktivitātes (14:00) rāda kā vienu laika bloku ar četrām paralēlām
+kategorijām: 🧒 Bērniem · 🙌 Jauniešiem · 👔 Vīriem · 🌸 Sievietēm. Katrai
+kategorijai datu masīvā ir vieta konkrētam aktivitātes nosaukumam; pagaidām
+vispārīgi vietturi (piem., "Spēles un sports"), ko lietotājs nomainīs.
+Nakts aktivitātes nosaukums vispārīgs ("Nakts aktivitāte").
 
 ## Datu glabāšana kodā
 
