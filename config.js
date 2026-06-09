@@ -29,7 +29,12 @@ const CONFIG = {
    *    pie notikuma parādīsies poga "Skatīties YouTube".
    * 2) Izklājlapā: Fails → Kopīgot → Publicēt tīmeklī → formāts CSV.
    * 3) Nokopēto adresi ielīmē šeit starp pēdiņām.
-   * Ja adrese tukša vai neielādējas, lapa rāda iebūvēto plānu.
+   *
+   * Ja adrese tukša vai neielādējas, lapa mēģina ielasīt lokālo failu
+   * dienas-plans.csv (jāatrodas blakus index.html; strādā tikai tad, ja lapa
+   * atvērta caur serveri, ne ar dubultklikšķi uz faila). Ja arī tā nav,
+   * rāda iebūvēto plānu. dienas-plans-template.csv ir tikai paraugs
+   * izklājlapai — lapa to nelasa.
    */
   "sheetCsvUrl": "",
 

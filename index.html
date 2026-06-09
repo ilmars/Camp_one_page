@@ -357,16 +357,23 @@ function autoSelect(){
   renderDay(start >= 0 ? start : 0);
 }
 
+async function loadCsv(url){
+  try {
+    const res = await fetch(url);
+    if (res.ok) {
+      const built = buildDays(parseCSV(await res.text()));
+      if (built.length) { DAYS = built; return true; }
+    }
+  } catch (e) { /* nav pieejams — mēģinās nākamo avotu */ }
+  return false;
+}
+
 async function init(){
   renderStatic();
-  if (C.sheetCsvUrl) {
-    try {
-      const res = await fetch(C.sheetCsvUrl);
-      if (res.ok) {
-        const built = buildDays(parseCSV(await res.text()));
-        if (built.length) DAYS = built;
-      }
-    } catch (e) { /* nav interneta vai saites kļūda — paliek iebūvētais plāns */ }
+  // Plāna avoti pēc prioritātes: Google izklājlapa → lokālais dienas-plans.csv → iebūvētais plāns.
+  // Lokālais CSV strādā tikai tad, ja lapa atvērta caur serveri (http), ne kā file://.
+  if (!(C.sheetCsvUrl && await loadCsv(C.sheetCsvUrl))) {
+    await loadCsv('dienas-plans.csv');
   }
   renderNav();
   autoSelect();
