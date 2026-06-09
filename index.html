@@ -175,6 +175,12 @@ function esc(s){
   return String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 }
 
+// "Trešdiena" -> "tresdiena" (adreses enkuram #tresdiena)
+function slug(s){
+  const map = {'ā':'a','č':'c','ē':'e','ģ':'g','ī':'i','ķ':'k','ļ':'l','ņ':'n','š':'s','ū':'u','ž':'z'};
+  return String(s).toLowerCase().replace(/[āčēģīķļņšūž]/g, c => map[c]).replace(/\s+/g, '-');
+}
+
 /* ===== Statiskās sadaļas no konfigurācijas ===== */
 function renderStatic(){
   document.title = (C.nosaukums || 'Nometne') + (C.datumi ? ' · ' + C.datumi : '');
@@ -313,8 +319,11 @@ let DAYS = DEFAULT_DAYS;
 const nav = document.getElementById('daynav');
 const sched = document.getElementById('sched');
 
-function renderDay(i){
+function renderDay(i, updateHash){
   const day = DAYS[i];
+  if (updateHash !== false) {
+    history.replaceState(null, '', '#' + slug(day.name));
+  }
   document.querySelectorAll('.daypill').forEach((p, j) => p.classList.toggle('active', j === i));
   let html = '<div class="day-head"><h2>' + esc(day.name) + (day.date ? ', ' + esc(day.date) : '') + '</h2>' +
              (day.sub ? '<p>' + esc(day.sub) + '</p>' : '') + '</div>';
@@ -350,12 +359,25 @@ function renderNav(){
   });
 }
 
+function dayIndexFromHash(){
+  const h = decodeURIComponent(location.hash.replace('#', '')).toLowerCase();
+  return h ? DAYS.findIndex(d => slug(d.name) === slug(h)) : -1;
+}
+
 function autoSelect(){
-  // Nometnes laikā (pēc dienas un mēneša, gads netiek ņemts vērā) atver šodienu; citādi pirmo dienu.
-  const now = new Date();
-  let start = DAYS.findIndex(d => d.d === now.getDate() && d.m === now.getMonth() + 1);
+  // Prioritāte: adreses enkurs (#otrdiena) → šodiena nometnes laikā → pirmā diena.
+  let start = dayIndexFromHash();
+  if (start < 0) {
+    const now = new Date();
+    start = DAYS.findIndex(d => d.d === now.getDate() && d.m === now.getMonth() + 1);
+  }
   renderDay(start >= 0 ? start : 0);
 }
+
+window.addEventListener('hashchange', () => {
+  const i = dayIndexFromHash();
+  if (i >= 0) renderDay(i, false);
+});
 
 async function loadCsv(url){
   try {
