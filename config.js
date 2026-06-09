@@ -36,7 +36,7 @@ const CONFIG = {
    * rāda iebūvēto plānu. dienas-plans-template.csv ir tikai paraugs
    * izklājlapai — lapa to nelasa.
    */
-  "sheetCsvUrl": "",
+  "sheetCsvUrl": "https://docs.google.com/spreadsheets/d/e/2PACX-1vRXw3iUnnLOqkK_phnID0EyDymIXJMbW7a9_dSiTvLAYwT1rEJXiSJfcRxrpFzw0dEu4PD2K-lVIb2i/pub?gid=1492567129&single=true&output=csv",
 
   /* Dienu datumi un piezīmes (datums formātā DD.MM) */
   "dienas": {
