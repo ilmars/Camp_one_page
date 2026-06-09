@@ -372,8 +372,12 @@ async function init(){
   renderStatic();
   // Plāna avoti pēc prioritātes: Google izklājlapa → lokālais dienas-plans.csv → iebūvētais plāns.
   // Lokālais CSV strādā tikai tad, ja lapa atvērta caur serveri (http), ne kā file://.
-  if (!(C.sheetCsvUrl && await loadCsv(C.sheetCsvUrl))) {
-    await loadCsv('dienas-plans.csv');
+  if (C.sheetCsvUrl && await loadCsv(C.sheetCsvUrl)) {
+    console.info('Dienas plāns ielādēts no Google izklājlapas.');
+  } else if (await loadCsv('dienas-plans.csv')) {
+    console.info('Dienas plāns ielādēts no lokālā faila dienas-plans.csv (Google izklājlapa nebija pieejama).');
+  } else {
+    console.info('Dienas plāns: iebūvētais (ne izklājlapa, ne dienas-plans.csv nebija pieejami).');
   }
   renderNav();
   autoSelect();
