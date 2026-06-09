@@ -105,3 +105,25 @@ nemainot HTML struktūru.
 ## Ārpus tvēruma
 
 - Reģistrācijas forma, kartes, vairākvalodu atbalsts, CMS — nav vajadzīgs.
+
+## 2. iterācija (2026-06-09, lietotāja labojumi pēc pirmās versijas)
+
+1. **Dienas plāns no Google Sheets.** Lapas augšā JS konstante
+   `SHEET_CSV_URL` — publicētas Google izklājlapas CSV adrese
+   (Fails → Kopīgot → Publicēt tīmeklī → CSV). Ja adrese norādīta un
+   ielāde izdodas, plānu būvē no CSV; citādi (tukša adrese, nav interneta,
+   kļūda) klusi izmanto iebūvēto plānu. CSV kolonnas:
+   `Diena,Laiks,Nosaukums,Apraksts,Grupa`:
+   - `Diena`: Pirmdiena … Sestdiena (rindu secība nosaka notikumu secību dienā);
+   - `Grupa` tukša = visiem; `Paralēli` = dievkalpojums ar trim paralēlajām
+     grupām; `Bērniem`/`Jauniešiem`/`Vīriem`/`Sievietēm` = vienas dienas un
+     laika rindas apvieno vienā "Dienas aktivitātes" kartītē pa kategorijām.
+   - Repo pievienots paraugs `dienas-plans-template.csv`, ko ielīmēt izklājlapā.
+2. **Bez krāsainajām emoji ikonām.** Visas emoji aizstāj ar tekstu vai
+   vienkrāsainām inline SVG ikonām (currentColor).
+3. **Sestdienas papildinājums:** 13:00 "Pusdienas un došanās mājās".
+4. **Foto saite:** zem galerijas saite "Visas nometnes bildes" (vietturis
+   `href="#"` ar komentāru, kur ielīmēt albuma adresi). Galerija paliek.
+5. **Kontaktu sadaļa:** kartītes ar atbildīgajām personām — loma, vārds
+   (vietturis), telefons kā `tel:` saite. Sākotnējās lomas: nometnes
+   vadītājs, svētdienas skola, jaunieši, saimniecības jautājumi.

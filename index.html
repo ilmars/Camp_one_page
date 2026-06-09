@@ -23,6 +23,7 @@
 html{scroll-behavior:smooth}
 body{background:var(--bg);color:var(--ink);font-family:'Inter',system-ui,-apple-system,'Segoe UI',sans-serif;line-height:1.5}
 .wrap{max-width:760px;margin:0 auto;padding:0 20px}
+.icon{width:1em;height:1em;vertical-align:-.12em;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 
 /* ===== Hero ===== */
 .hero{position:relative;overflow:hidden;background:#16301f}
@@ -68,11 +69,23 @@ h1{font-size:clamp(2.3rem,7vw,3.8rem);font-weight:900;line-height:1.05;letter-sp
 .cat span{font-size:.78rem;color:var(--muted)}
 @keyframes rise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
 
+/* ===== Section headings ===== */
+.sec{padding:26px 0 10px}
+.sec h2{font-size:1.2rem;font-weight:800;margin-bottom:14px}
+
 /* ===== Gallery ===== */
-.gallery-sec{padding:26px 0 10px}
-.gallery-sec h2{font-size:1.2rem;font-weight:800;margin-bottom:14px}
 .gallery{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
 .gallery img{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:14px;background:#e3e8e1;display:block}
+.more-link{display:inline-flex;align-items:center;gap:7px;margin-top:14px;color:var(--accent);font-weight:700;font-size:.9rem;text-decoration:none}
+.more-link:hover{text-decoration:underline}
+
+/* ===== Contacts ===== */
+.contacts{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:10px}
+.contact{background:var(--card);border-radius:14px;box-shadow:var(--shadow);padding:14px 16px}
+.contact .role{display:block;font-size:.74rem;letter-spacing:.08em;text-transform:uppercase;font-weight:700;color:var(--accent);margin-bottom:3px}
+.contact b{display:block;font-size:.95rem}
+.contact a{display:inline-flex;align-items:center;gap:6px;margin-top:5px;color:var(--muted);font-size:.85rem;text-decoration:none}
+.contact a:hover{color:var(--accent)}
 
 /* ===== Footer ===== */
 footer{padding:34px 0 44px;text-align:center;color:var(--muted);font-size:.82rem}
@@ -87,17 +100,24 @@ footer b{color:var(--ink)}
 </head>
 <body>
 
+<svg style="display:none" xmlns="http://www.w3.org/2000/svg">
+  <symbol id="i-pin" viewBox="0 0 24 24"><path d="M12 21s-7-5.5-7-11a7 7 0 0 1 14 0c0 5.5-7 11-7 11Z"/><circle cx="12" cy="10" r="2.6"/></symbol>
+  <symbol id="i-phone" viewBox="0 0 24 24"><path d="M5 4h4l2 5-2.5 1.5a12 12 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2Z"/></symbol>
+  <symbol id="i-camera" viewBox="0 0 24 24"><path d="M4 8h3l2-3h6l2 3h3v11H4Z"/><circle cx="12" cy="13" r="3.2"/></symbol>
+  <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
+</svg>
+
 <header class="hero">
   <img class="hero-img" src="https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?auto=format&fit=crop&w=1600&q=80" alt="" onerror="this.style.display='none'">
   <div class="hero-overlay"></div>
   <div class="wrap hero-content">
     <div class="kicker">21.–26. jūnijs</div>
     <h1>Draudzes<br>ģimeņu nometne</h1>
-    <div class="loc">📍 Nometnes vieta</div>
+    <div class="loc"><svg class="icon"><use href="#i-pin"/></svg> Nometnes vieta</div>
     <div class="chips">
-      <span class="chip">👨‍👩‍👧 Pieaugušie</span>
-      <span class="chip">🙌 Jaunieši (no 12 g.)</span>
-      <span class="chip">🎨 Svētdienas skola (3–11 g.)</span>
+      <span class="chip">Pieaugušie</span>
+      <span class="chip">Jaunieši (no 12 g.)</span>
+      <span class="chip">Svētdienas skola (3–11 g.)</span>
     </div>
     <p class="hero-note">Dievkalpojumi visām trim grupām notiek paralēli — katrai grupai sava programma.</p>
   </div>
@@ -109,12 +129,24 @@ footer b{color:var(--ink)}
 
 <main class="wrap sched" id="sched"></main>
 
-<section class="wrap gallery-sec">
+<section class="wrap sec">
   <h2>Mirkļi no nometnes</h2>
   <div class="gallery">
     <img src="https://images.unsplash.com/photo-1441974231531-c6227db76b6e?auto=format&fit=crop&w=800&q=80" alt="Mežs" onerror="this.style.visibility='hidden'">
     <img src="https://images.unsplash.com/photo-1470770841072-f978cf4d019e?auto=format&fit=crop&w=800&q=80" alt="Ezers" onerror="this.style.visibility='hidden'">
     <img src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?auto=format&fit=crop&w=800&q=80" alt="Kalni" onerror="this.style.visibility='hidden'">
+  </div>
+  <!-- Ielīmē sava foto albuma (piem., Google Photos) adresi href vietā -->
+  <a class="more-link" href="#"><svg class="icon"><use href="#i-camera"/></svg> Visas nometnes bildes <svg class="icon"><use href="#i-arrow"/></svg></a>
+</section>
+
+<section class="wrap sec" id="kontakti">
+  <h2>Kontakti</h2>
+  <div class="contacts">
+    <div class="contact"><span class="role">Nometnes vadītājs</span><b>Vārds Uzvārds</b><a href="tel:+37120000000"><svg class="icon"><use href="#i-phone"/></svg> +371 20 000 000</a></div>
+    <div class="contact"><span class="role">Svētdienas skola</span><b>Vārds Uzvārds</b><a href="tel:+37120000000"><svg class="icon"><use href="#i-phone"/></svg> +371 20 000 000</a></div>
+    <div class="contact"><span class="role">Jaunieši</span><b>Vārds Uzvārds</b><a href="tel:+37120000000"><svg class="icon"><use href="#i-phone"/></svg> +371 20 000 000</a></div>
+    <div class="contact"><span class="role">Saimniecības jautājumi</span><b>Vārds Uzvārds</b><a href="tel:+37120000000"><svg class="icon"><use href="#i-phone"/></svg> +371 20 000 000</a></div>
   </div>
 </section>
 
@@ -123,21 +155,38 @@ footer b{color:var(--ink)}
 </footer>
 
 <script>
-const PARALLEL = ['👨‍👩‍👧 Pieaugušie', '🙌 Jaunieši (no 12 g.)', '🎨 Svētdienas skola (3–11 g.)'];
+/*
+ * DIENAS PLĀNS NO GOOGLE IZKLĀJLAPAS
+ * 1) Izveido Google izklājlapu ar kolonnām: Diena,Laiks,Nosaukums,Apraksts,Grupa
+ *    (paraugs repo failā dienas-plans-template.csv — ielīmē to izklājlapā).
+ * 2) Fails → Kopīgot → Publicēt tīmeklī → izvēlies lapu un formātu CSV.
+ * 3) Nokopē iegūto adresi un ielīmē šeit starp pēdiņām:
+ */
+const SHEET_CSV_URL = '';
 
-const ACT_CATS = [
-  {icon:'🧒', label:'Bērniem',    activity:'Spēles un radošās darbnīcas'},
-  {icon:'🙌', label:'Jauniešiem', activity:'Sports un komandu spēles'},
-  {icon:'👔', label:'Vīriem',     activity:'Volejbols un sarunas'},
-  {icon:'🌸', label:'Sievietēm',  activity:'Rokdarbi un pastaigas'}
-];
+const PARALLEL = ['Pieaugušie', 'Jaunieši (no 12 g.)', 'Svētdienas skola (3–11 g.)'];
+const CAT_LABELS = ['Bērniem', 'Jauniešiem', 'Vīriem', 'Sievietēm'];
+
+const DAY_META = {
+  'Pirmdiena':   {date:'21.06', d:21, sub:'Ierašanās diena'},
+  'Otrdiena':    {date:'22.06', d:22},
+  'Trešdiena':   {date:'23.06', d:23},
+  'Ceturtdiena': {date:'24.06', d:24},
+  'Piektdiena':  {date:'25.06', d:25},
+  'Sestdiena':   {date:'26.06', d:26, sub:'Noslēguma diena'}
+};
 
 function fullDay(){
   return [
     {time:'8:30',  title:'Rīta lūgšanas un brokastis', desc:'Visiem kopā'},
     {time:'10:00', title:'Rīta dievkalpojums', parallel:true},
     {time:'13:00', title:'Pusdienas'},
-    {time:'14:00', title:'Dienas aktivitātes', cats:true},
+    {time:'14:00', title:'Dienas aktivitātes', cats:[
+      {label:'Bērniem',    activity:'Spēles un radošās darbnīcas'},
+      {label:'Jauniešiem', activity:'Sports un komandu spēles'},
+      {label:'Vīriem',     activity:'Volejbols un sarunas'},
+      {label:'Sievietēm',  activity:'Rokdarbi un pastaigas'}
+    ]},
     {time:'17:30', title:'Vakariņas'},
     {time:'18:30', title:'Vakara dievkalpojums', parallel:true},
     {time:'22:00', title:'Vakara uzkodas'},
@@ -145,40 +194,85 @@ function fullDay(){
   ];
 }
 
-const DAYS = [
-  {name:'Pirmdiena', date:'21.06', d:21, sub:'Ierašanās diena', events:[
+const DEFAULT_DAYS = [
+  {name:'Pirmdiena', ...DAY_META['Pirmdiena'], events:[
     {time:'18:30', title:'Atklāšanas dievkalpojums', parallel:true},
     {time:'22:00', title:'Vakara uzkodas'},
     {time:'22:30', title:'Nakts aktivitāte'}
   ]},
-  {name:'Otrdiena',    date:'22.06', d:22, events:fullDay()},
-  {name:'Trešdiena',   date:'23.06', d:23, events:fullDay()},
-  {name:'Ceturtdiena', date:'24.06', d:24, events:fullDay()},
-  {name:'Piektdiena',  date:'25.06', d:25, events:fullDay()},
-  {name:'Sestdiena',   date:'26.06', d:26, sub:'Noslēguma diena', events:[
+  {name:'Otrdiena',    ...DAY_META['Otrdiena'],    events:fullDay()},
+  {name:'Trešdiena',   ...DAY_META['Trešdiena'],   events:fullDay()},
+  {name:'Ceturtdiena', ...DAY_META['Ceturtdiena'], events:fullDay()},
+  {name:'Piektdiena',  ...DAY_META['Piektdiena'],  events:fullDay()},
+  {name:'Sestdiena',   ...DAY_META['Sestdiena'],   events:[
     {time:'8:30',  title:'Rīta lūgšanas un brokastis', desc:'Visiem kopā'},
-    {time:'10:00', title:'Noslēguma dievkalpojums', desc:'Visas grupas kopā — nometnes noslēgums'}
+    {time:'10:00', title:'Noslēguma dievkalpojums', desc:'Visas grupas kopā — nometnes noslēgums'},
+    {time:'13:00', title:'Pusdienas un došanās mājās'}
   ]}
 ];
 
+function parseCSV(text){
+  const rows = []; let row = [], cell = '', q = false;
+  for (let i = 0; i < text.length; i++) {
+    const ch = text[i];
+    if (q) {
+      if (ch === '"') { if (text[i+1] === '"') { cell += '"'; i++; } else q = false; }
+      else cell += ch;
+    }
+    else if (ch === '"') q = true;
+    else if (ch === ',') { row.push(cell); cell = ''; }
+    else if (ch === '\n') { row.push(cell.replace(/\r$/,'')); rows.push(row); row = []; cell = ''; }
+    else cell += ch;
+  }
+  if (cell !== '' || row.length) { row.push(cell.replace(/\r$/,'')); rows.push(row); }
+  return rows;
+}
+
+function buildDays(rows){
+  rows = rows.slice(1); // izlaiž virsraksta rindu
+  const days = [], byName = {};
+  for (const r of rows) {
+    const [diena, laiks, nosaukums, apraksts, grupa] = [0,1,2,3,4].map(i => (r[i] || '').trim());
+    if (!diena || !laiks || !nosaukums) continue;
+    if (!byName[diena]) {
+      byName[diena] = {name: diena, ...(DAY_META[diena] || {}), events: []};
+      days.push(byName[diena]);
+    }
+    const day = byName[diena];
+    if (CAT_LABELS.includes(grupa)) {
+      let ev = day.events.find(e => e.time === laiks && e.cats);
+      if (!ev) { ev = {time: laiks, title: 'Dienas aktivitātes', cats: []}; day.events.push(ev); }
+      ev.cats.push({label: grupa, activity: nosaukums});
+    } else {
+      day.events.push({time: laiks, title: nosaukums, desc: apraksts || undefined, parallel: /paral/i.test(grupa)});
+    }
+  }
+  return days;
+}
+
+function esc(s){
+  return String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+}
+
+let DAYS = DEFAULT_DAYS;
 const nav = document.getElementById('daynav');
 const sched = document.getElementById('sched');
 
 function renderDay(i){
   const day = DAYS[i];
   document.querySelectorAll('.daypill').forEach((p, j) => p.classList.toggle('active', j === i));
-  let html = '<div class="day-head"><h2>' + day.name + ', ' + day.date + '</h2>' +
-             (day.sub ? '<p>' + day.sub + '</p>' : '') + '</div>';
+  let html = '<div class="day-head"><h2>' + esc(day.name) + (day.date ? ', ' + esc(day.date) : '') + '</h2>' +
+             (day.sub ? '<p>' + esc(day.sub) + '</p>' : '') + '</div>';
   for (const ev of day.events) {
-    html += '<div class="event"><div class="time">' + ev.time + '</div><div class="event-body">' +
-            '<h3>' + ev.title + '</h3>' +
-            (ev.desc ? '<p class="desc">' + ev.desc + '</p>' : '');
+    html += '<div class="event"><div class="time">' + esc(ev.time) + '</div><div class="event-body">' +
+            '<h3>' + esc(ev.title) + '</h3>' +
+            (ev.desc ? '<p class="desc">' + esc(ev.desc) + '</p>' : '');
     if (ev.parallel) {
-      html += '<div class="tags">' + PARALLEL.map(g => '<span class="tag">' + g + '</span>').join('') + '</div>';
+      html += '<div class="tags">' + PARALLEL.map(g => '<span class="tag">' + esc(g) + '</span>').join('') + '</div>';
     }
     if (ev.cats) {
-      html += '<div class="cats">' + ACT_CATS.map(c =>
-        '<div class="cat"><b>' + c.icon + ' ' + c.label + '</b><span>' + c.activity + '</span></div>'
+      html += '<div class="cats">' + ev.cats.map(c =>
+        '<div class="cat"><b>' + esc(c.label) + '</b><span>' + esc(c.activity) + '</span></div>'
       ).join('') + '</div>';
     }
     html += '</div></div>';
@@ -186,21 +280,43 @@ function renderDay(i){
   sched.innerHTML = html;
 }
 
-DAYS.forEach((day, i) => {
-  const btn = document.createElement('button');
-  btn.className = 'daypill';
-  btn.innerHTML = day.name + '<em>' + day.date + '</em>';
-  btn.addEventListener('click', () => renderDay(i));
-  nav.appendChild(btn);
-});
-
-// Auto-select today's day during camp (June 21–26, year ignored); otherwise Monday.
-const now = new Date();
-let start = 0;
-if (now.getMonth() === 5 && now.getDate() >= 21 && now.getDate() <= 26) {
-  start = now.getDate() - 21;
+function renderNav(){
+  nav.innerHTML = '';
+  DAYS.forEach((day, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'daypill';
+    btn.innerHTML = esc(day.name) + (day.date ? '<em>' + esc(day.date) + '</em>' : '');
+    btn.addEventListener('click', () => renderDay(i));
+    nav.appendChild(btn);
+  });
 }
-renderDay(start);
+
+function autoSelect(){
+  // Nometnes laikā (21.–26. jūnijs, gads netiek ņemts vērā) atver šodienu; citādi pirmo dienu.
+  const now = new Date();
+  let start = 0;
+  if (now.getMonth() === 5) {
+    const idx = DAYS.findIndex(d => d.d === now.getDate());
+    if (idx >= 0) start = idx;
+  }
+  renderDay(start);
+}
+
+async function init(){
+  if (SHEET_CSV_URL) {
+    try {
+      const res = await fetch(SHEET_CSV_URL);
+      if (res.ok) {
+        const built = buildDays(parseCSV(await res.text()));
+        if (built.length) DAYS = built;
+      }
+    } catch (e) { /* nav interneta vai saites kļūda — paliek iebūvētais plāns */ }
+  }
+  renderNav();
+  autoSelect();
+}
+
+init();
 </script>
 </body>
 </html>
