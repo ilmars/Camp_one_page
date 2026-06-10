@@ -72,6 +72,7 @@ h1{font-size:clamp(2.3rem,7vw,3.8rem);font-weight:900;line-height:1.05;letter-sp
 .cat{background:#f7f7f2;border:1px solid var(--line);border-radius:12px;padding:10px 12px}
 .cat b{display:block;font-size:.84rem}
 .cat span{font-size:.78rem;color:var(--muted)}
+.cat i{display:block;font-size:.72rem;color:#b3b3aa;font-style:normal;margin-top:2px}
 @keyframes rise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
 
 /* ===== Section headings ===== */
@@ -164,7 +165,6 @@ footer b{color:var(--ink)}
 const C = (typeof CONFIG !== 'undefined') ? CONFIG : {};
 
 const PARALLEL = C.grupas || [];
-const CAT_LABELS = ['Bērniem', 'Jauniešiem', 'Vīriem', 'Sievietēm'];
 const DAY_META = {};
 for (const [name, info] of Object.entries(C.dienas || {})) {
   DAY_META[name] = {date: info.datums || '', sub: info.piezime, d: parseInt(info.datums, 10) || 0,
@@ -302,10 +302,12 @@ function buildDays(rows){
       days.push(byName[diena]);
     }
     const day = byName[diena];
-    if (CAT_LABELS.includes(grupa)) {
+    if (grupa && !/paral/i.test(grupa)) {
+      // Jebkura grupa (Bērniem, Vīriem, Pieaugušajiem ...) kļūst par kategoriju
+      // kopīgajā tā paša laika "Dienas aktivitātes" kartītē.
       let ev = day.events.find(e => e.time === laiks && e.cats);
       if (!ev) { ev = {time: laiks, title: 'Dienas aktivitātes', cats: []}; day.events.push(ev); }
-      ev.cats.push({label: grupa, activity: nosaukums});
+      ev.cats.push({label: grupa, activity: nosaukums, desc: apraksts || undefined});
     } else {
       day.events.push({time: laiks, title: nosaukums, desc: apraksts || undefined, parallel: /paral/i.test(grupa),
                        yt: /^https?:\/\//i.test(youtube) ? youtube : undefined});
@@ -336,7 +338,8 @@ function renderDay(i, updateHash){
     }
     if (ev.cats) {
       html += '<div class="cats">' + ev.cats.map(c =>
-        '<div class="cat"><b>' + esc(c.label) + '</b><span>' + esc(c.activity) + '</span></div>'
+        '<div class="cat"><b>' + esc(c.label) + '</b><span>' + esc(c.activity) + '</span>' +
+        (c.desc ? '<i>' + esc(c.desc) + '</i>' : '') + '</div>'
       ).join('') + '</div>';
     }
     if (ev.yt) {

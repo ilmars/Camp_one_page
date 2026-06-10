@@ -25,6 +25,10 @@ const CONFIG = {
   /* ===== Dienas plāns no Google izklājlapas =====
    * 1) Izveido Google izklājlapu ar kolonnām: Diena,Laiks,Nosaukums,Apraksts,Grupa,YouTube
    *    (paraugs failā dienas-plans-template.csv — importē to izklājlapā).
+   *    Grupa kolonna: tukša = parasts notikums visiem; "Paralēli" =
+   *    dievkalpojums ar trim grupu birkām; JEBKURA cita vērtība (Bērniem,
+   *    Vīriem, Pieaugušajiem ...) = aktivitātes kategorija, kas apvienojas
+   *    ar citām tā paša laika kategorijām vienā "Dienas aktivitātes" kartītē.
    *    YouTube kolonnā vari ielikt tiešraides vai ieraksta saiti —
    *    pie notikuma parādīsies poga "Skatīties YouTube".
    * 2) Izklājlapā: Fails → Kopīgot → Publicēt tīmeklī → formāts CSV.
