@@ -19,7 +19,9 @@ const CONFIG = {
   "heroVirsraksts": "Aspolītā zeme",
 
   /* Grupu žetoni lapas augšā */
-  "grupas": ["Pieaugušie", "Jaunieši (no 12 g.)", "Svētdienas skola (3–11 g.)"],
+  // "grupas": ["Pieaugušie", "Jaunieši (no 12 g.)", "Svētdienas skola (3–11 g.)"],
+  
+  "grupas": [],
   "piezime": "Jo tas jums nav tukšs vārds, bet ir jūsu dzīvība un ar šo vārdu jūs ilgi dzīvosit tanī zemē, uz kuru jūs ejat pāri Jordānai, lai to iemantotu. 5.Mozus 32:47",
 
   /* ===== Dienas plāns no Google izklājlapas =====
