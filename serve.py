@@ -35,8 +35,10 @@ if __name__ == "__main__":
     for port in range(PORT, PORT + 20):
         try:
             # Bez allow_reuse_address — Windows citādi ļauj diviem serveriem
-            # klusi dalīt vienu portu, un atbild "svešais"
-            httpd = socketserver.ThreadingTCPServer(("", port), Handler)
+            # klusi dalīt vienu portu, un atbild "svešais".
+            # 127.0.0.1 — serveris redzams tikai šajā datorā, ne visam wi-fi tīklam
+            # (mape satur arī .git ar visu vēsturi).
+            httpd = socketserver.ThreadingTCPServer(("127.0.0.1", port), Handler)
             break
         except OSError:
             print(f"Ports {port} aizņemts, mēģinu nākamo...")

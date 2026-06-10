@@ -18,7 +18,7 @@
   --bg:#fafaf7;
   --card:#ffffff;
   --ink:#1a1a1a;
-  --muted:#8a8a82;
+  --muted:#6f6f66;
   --accent:#2c7a4b;
   --accent-soft:#e7f2ea;
   --line:#ecece6;
@@ -86,7 +86,7 @@ h1{font-size:clamp(2.3rem,7vw,3.8rem);font-weight:900;line-height:1.05;letter-sp
 .cat{background:#f7f7f2;border:1px solid var(--line);border-radius:12px;padding:10px 12px}
 .cat b{display:block;font-size:.84rem}
 .cat span{font-size:.78rem;color:var(--muted)}
-.cat i{display:block;font-size:.72rem;color:#b3b3aa;font-style:normal;margin-top:2px}
+.cat i{display:block;font-size:.74rem;color:#85857c;font-style:normal;margin-top:2px}
 .cat i .icon{margin-right:4px;color:var(--accent)}
 .ev-vieta .icon,.cat i .icon{flex:0 0 auto}
 @keyframes rise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
@@ -160,7 +160,7 @@ footer b{color:var(--ink)}
   <div class="progs" id="programmas"></div>
 </section>
 
-<section class="wrap sec">
+<section class="wrap sec" id="galerija-sec">
   <h2 id="galerijas-virsraksts"></h2>
   <div class="gallery" id="galerija"></div>
   <a class="more-link" id="foto-saite" href="#"><svg class="icon"><use href="#i-camera"/></svg> <span id="foto-saites-teksts"></span> <svg class="icon"><use href="#i-arrow"/></svg></a>
@@ -235,14 +235,23 @@ function renderStatic(){
     progSec.hidden = true;
   }
 
+  // Galerijas sadaļu rāda tikai tad, ja ir bildes; foto saiti — tikai ja ir īsta adrese
+  const galerija = C.galerija || [];
+  document.getElementById('galerija-sec').hidden = !galerija.length;
   document.getElementById('galerijas-virsraksts').textContent = C.galerijasVirsraksts || '';
-  document.getElementById('galerija').innerHTML = (C.galerija || []).map(url =>
+  document.getElementById('galerija').innerHTML = galerija.map(url =>
     '<img src="' + esc(url) + '" alt="" onerror="this.style.visibility=\'hidden\'">').join('');
-  document.getElementById('foto-saite').href = C.fotoAlbumaSaite || '#';
+  const fotoSaite = document.getElementById('foto-saite');
+  const irAlbums = C.fotoAlbumaSaite && C.fotoAlbumaSaite !== '#';
+  fotoSaite.hidden = !irAlbums;
+  fotoSaite.href = irAlbums ? C.fotoAlbumaSaite : '#';
   document.getElementById('foto-saites-teksts').textContent = C.fotoSaitesTeksts || '';
 
+  // Kontaktu sadaļu rāda tikai tad, ja ir kontakti
+  const kontakti = C.kontakti || [];
+  document.getElementById('kontakti-sec').hidden = !kontakti.length;
   document.getElementById('kontaktu-virsraksts').textContent = C.kontaktuVirsraksts || '';
-  document.getElementById('kontakti').innerHTML = (C.kontakti || []).map(k =>
+  document.getElementById('kontakti').innerHTML = kontakti.map(k =>
     '<div class="contact"><span class="role">' + esc(k.loma) + '</span><b>' + esc(k.vards) + '</b>' +
     '<a href="tel:' + esc((k.telefons || '').replace(/\s/g, '')) + '"><svg class="icon"><use href="#i-phone"/></svg> ' + esc(k.telefons) + '</a></div>'
   ).join('');
@@ -415,7 +424,10 @@ function renderDay(i, updateHash){
   if (updateHash !== false) {
     history.replaceState(null, '', '#' + slug(day.name));
   }
-  document.querySelectorAll('.daypill').forEach((p, j) => p.classList.toggle('active', j === i));
+  document.querySelectorAll('.daypill').forEach((p, j) => {
+    p.classList.toggle('active', j === i);
+    p.setAttribute('aria-current', j === i ? 'true' : 'false');
+  });
   let html = '<div class="day-head"><h2>' + esc(day.name) + (day.date ? ', ' + esc(day.date) : '') + '</h2>' +
              (day.sub ? '<p>' + esc(day.sub) + '</p>' : '') + '</div>';
   for (const ev of day.events) {
@@ -477,28 +489,36 @@ window.addEventListener('hashchange', () => {
 
 async function loadCsv(url){
   try {
-    const res = await fetch(url);
+    // Taimauts, lai vājā tīklā lapa nepaliek gaidām bezgalīgi
+    const signal = (typeof AbortSignal !== 'undefined' && AbortSignal.timeout) ? AbortSignal.timeout(8000) : undefined;
+    const res = await fetch(url, {signal: signal});
     if (res.ok) {
       const built = buildDays(parseCSV(await res.text()));
       if (built.length) { DAYS = built; return true; }
     }
-  } catch (e) { /* nav pieejams — mēģinās nākamo avotu */ }
+  } catch (e) { /* nav pieejams vai taimauts — mēģinās nākamo avotu */ }
   return false;
 }
 
 async function init(){
   renderStatic();
-  // Plāna avoti pēc prioritātes: Google izklājlapa → lokālais dienas-plans.csv → iebūvētais plāns.
-  // Lokālais CSV strādā tikai tad, ja lapa atvērta caur serveri (http), ne kā file://.
-  if (C.sheetCsvUrl && await loadCsv(C.sheetCsvUrl)) {
-    console.info('Dienas plāns ielādēts no Google izklājlapas.');
-  } else if (await loadCsv('dienas-plans.csv')) {
-    console.info('Dienas plāns ielādēts no lokālā faila dienas-plans.csv (Google izklājlapa nebija pieejama).');
-  } else {
-    console.info('Dienas plāns: iebūvētais (ne izklājlapa, ne dienas-plans.csv nebija pieejami).');
-  }
+  // Uzreiz rāda iebūvēto plānu, lai lapa nekad nestāv tukša...
   renderNav();
   autoSelect();
+  // ...un tad klusi atsvaidzina ar īstajiem datiem.
+  // Avoti pēc prioritātes: Google izklājlapa → lokālais dienas-plans.csv → iebūvētais plāns.
+  // Lokālais CSV strādā tikai tad, ja lapa atvērta caur serveri (http), ne kā file://.
+  let avots = 'iebūvētais (ne izklājlapa, ne dienas-plans.csv nebija pieejami)';
+  if (C.sheetCsvUrl && await loadCsv(C.sheetCsvUrl)) {
+    avots = 'Google izklājlapa';
+  } else if (await loadCsv('dienas-plans.csv')) {
+    avots = 'lokālais fails dienas-plans.csv (Google izklājlapa nebija pieejama)';
+  }
+  console.info('Dienas plāns: ' + avots);
+  if (DAYS !== DEFAULT_DAYS) {
+    renderNav();
+    autoSelect(); // enkurs adresē saglabā izvēlēto dienu
+  }
 }
 
 init();
