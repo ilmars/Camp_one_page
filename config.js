@@ -27,10 +27,13 @@ const CONFIG = {
    *    Diena,Laiks,Nosaukums,Apraksts,Grupa,YouTube,Veids
    *    (paraugs failā dienas-plans-template.csv — importē to izklājlapā).
    *    Kolonnas atpazīst pēc nosaukumiem galvenē, tāpēc to secība nav svarīga.
-   *    Grupa: tukša = parasts notikums visiem; "Paralēli" = dievkalpojums ar
-   *    trim grupu birkām; JEBKURA cita vērtība (Bērniem, Vīriem,
-   *    Pieaugušajiem ...) = aktivitātes kategorija, kas apvienojas ar citām
-   *    tā paša laika kategorijām vienā "Dienas aktivitātes" kartītē.
+   *    Grupa: tukša = parasts notikums visiem; "Paralēli" = trīs standarta
+   *    grupu birkas; aktivitātēm (un rindām bez Veida) jebkura cita vērtība
+   *    (Bērniem, Vīriem, Pieaugušajiem ...) = kategorija, kas apvienojas ar
+   *    citām tā paša laika kategorijām vienā "Dienas aktivitātes" kartītē.
+   *    Pārējiem veidiem (Dievkalpojums, Lūgšanas, Ēdienreize) Grupa kolonnā
+   *    vari rakstīt savas birkas, atdalot ar semikolu, piem.:
+   *    "Pieaugušie un jaunieši; Svētdienas skola (3–11 g.)" → divas birkas.
    *    YouTube: tiešraides vai ieraksta saite — pie notikuma parādīsies
    *    poga "Skatīties YouTube".
    *    Veids (neobligāts): Dievkalpojums / Ēdienreize / Aktivitāte / Lūgšanas —
