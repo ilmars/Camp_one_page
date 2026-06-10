@@ -42,6 +42,8 @@ const CONFIG = {
    *    katram veidam sava krāsu svītra kartītes kreisajā malā.
    *    Aktīvs (neobligāta kolonna): ja tāda ir, lapā rāda tikai rindas ar
    *    TRUE (ērti ar izvēles rūtiņām — ieķeksētās rindas redzamas, pārējās nē).
+   *    Vieta (neobligāta kolonna): norises vieta — rādās ar kartes marķiera
+   *    ikonu zem notikuma nosaukuma.
    * 2) Izklājlapā: Fails → Kopīgot → Publicēt tīmeklī → formāts CSV.
    * 3) Nokopēto adresi ielīmē šeit starp pēdiņām.
    *

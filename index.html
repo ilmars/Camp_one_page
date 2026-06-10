@@ -75,6 +75,8 @@ h1{font-size:clamp(2.3rem,7vw,3.8rem);font-weight:900;line-height:1.05;letter-sp
 .event-body{flex:1}
 .event-body h3{font-size:1rem;font-weight:700}
 .event-body .desc{font-size:.84rem;color:var(--muted);margin-top:2px}
+.ev-vieta{display:inline-flex;align-items:center;gap:5px;font-size:.8rem;color:var(--muted);margin-top:4px}
+.ev-vieta .icon{color:var(--accent)}
 .yt-link{display:inline-flex;align-items:center;gap:6px;margin-top:9px;color:var(--accent);font-weight:700;font-size:.82rem;text-decoration:none}
 .yt-link:hover{text-decoration:underline}
 .tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:9px}
@@ -84,6 +86,8 @@ h1{font-size:clamp(2.3rem,7vw,3.8rem);font-weight:900;line-height:1.05;letter-sp
 .cat b{display:block;font-size:.84rem}
 .cat span{font-size:.78rem;color:var(--muted)}
 .cat i{display:block;font-size:.72rem;color:#b3b3aa;font-style:normal;margin-top:2px}
+.cat i .icon{margin-right:4px;color:var(--accent)}
+.ev-vieta .icon,.cat i .icon{flex:0 0 auto}
 @keyframes rise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
 
 /* ===== Section headings ===== */
@@ -322,7 +326,8 @@ function buildDays(rows){
     nosaukums: header.indexOf('nosaukums'), apraksts: header.indexOf('apraksts'),
     grupa: header.indexOf('grupa'), youtube: header.indexOf('youtube'),
     veids: header.indexOf('veids'),
-    aktivs: Math.max(header.indexOf('aktīvs'), header.indexOf('aktivs'))
+    aktivs: Math.max(header.indexOf('aktīvs'), header.indexOf('aktivs')),
+    vieta: header.indexOf('vieta')
   };
   if (idx.diena < 0 || idx.laiks < 0 || idx.nosaukums < 0) {
     idx = {diena:0, laiks:1, nosaukums:2, apraksts:3, grupa:4, youtube:5, veids:6};
@@ -333,6 +338,7 @@ function buildDays(rows){
   for (const r of rows.slice(1)) {
     const diena = cell(r, idx.diena), laiks = cell(r, idx.laiks), nosaukums = cell(r, idx.nosaukums);
     const apraksts = cell(r, idx.apraksts), grupa = cell(r, idx.grupa), youtube = cell(r, idx.youtube);
+    const vieta = cell(r, idx.vieta);
     const tips = eventType(cell(r, idx.veids));
     if (!diena || !laiks || !nosaukums) continue;
     // Ja izklājlapā ir kolonna "Aktīvs", rāda tikai rindas ar TRUE
@@ -348,10 +354,10 @@ function buildDays(rows){
       // kategoriju kopīgajā tā paša laika "Dienas aktivitātes" kartītē.
       let ev = day.events.find(e => e.time === laiks && e.cats);
       if (!ev) { ev = {time: laiks, title: 'Dienas aktivitātes', cats: [], type: 'aktivitate'}; day.events.push(ev); }
-      ev.cats.push({label: grupa, activity: nosaukums, desc: apraksts || undefined});
+      ev.cats.push({label: grupa, activity: nosaukums, desc: apraksts || undefined, vieta: vieta || undefined});
     } else {
       const ev = {time: laiks, title: nosaukums, desc: apraksts || undefined,
-                  type: tips || undefined,
+                  vieta: vieta || undefined, type: tips || undefined,
                   yt: /^https?:\/\//i.test(youtube) ? youtube : undefined};
       if (/paral/i.test(grupa)) {
         ev.parallel = true; // standarta trīs grupu birkas no config
@@ -382,7 +388,8 @@ function renderDay(i, updateHash){
   for (const ev of day.events) {
     html += '<div class="event' + (ev.type ? ' type-' + ev.type : '') + '"><div class="time">' + esc(ev.time) + '</div><div class="event-body">' +
             '<h3>' + esc(ev.title) + '</h3>' +
-            (ev.desc ? '<p class="desc">' + esc(ev.desc) + '</p>' : '');
+            (ev.desc ? '<p class="desc">' + esc(ev.desc) + '</p>' : '') +
+            (ev.vieta ? '<p class="ev-vieta"><svg class="icon"><use href="#i-pin"/></svg>' + esc(ev.vieta) + '</p>' : '');
     const tagi = ev.parallel ? PARALLEL : (ev.tags || []);
     if (tagi.length) {
       html += '<div class="tags">' + tagi.map(g => '<span class="tag">' + esc(g) + '</span>').join('') + '</div>';
@@ -390,7 +397,8 @@ function renderDay(i, updateHash){
     if (ev.cats) {
       html += '<div class="cats">' + ev.cats.map(c =>
         '<div class="cat"><b>' + esc(c.label) + '</b><span>' + esc(c.activity) + '</span>' +
-        (c.desc ? '<i>' + esc(c.desc) + '</i>' : '') + '</div>'
+        (c.desc ? '<i>' + esc(c.desc) + '</i>' : '') +
+        (c.vieta ? '<i><svg class="icon"><use href="#i-pin"/></svg>' + esc(c.vieta) + '</i>' : '') + '</div>'
       ).join('') + '</div>';
     }
     if (ev.yt) {
