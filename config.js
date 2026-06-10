@@ -20,7 +20,7 @@ const CONFIG = {
 
   /* Grupu žetoni lapas augšā */
   "grupas": ["Pieaugušie", "Jaunieši (no 12 g.)", "Svētdienas skola (3–11 g.)"],
-  "piezime": "Dievkalpojumi visām trim grupām notiek paralēli — katrai grupai sava programma.",
+  "piezime": "Jo tas jums nav tukšs vārds, bet ir jūsu dzīvība un ar šo vārdu jūs ilgi dzīvosit tanī zemē, uz kuru jūs ejat pāri Jordānai, lai to iemantotu. 5.Mozus 32:47",
 
   /* ===== Dienas plāns no Google izklājlapas =====
    * 1) Izveido Google izklājlapu ar kolonnām:
