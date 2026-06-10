@@ -23,14 +23,18 @@ const CONFIG = {
   "piezime": "Dievkalpojumi visām trim grupām notiek paralēli — katrai grupai sava programma.",
 
   /* ===== Dienas plāns no Google izklājlapas =====
-   * 1) Izveido Google izklājlapu ar kolonnām: Diena,Laiks,Nosaukums,Apraksts,Grupa,YouTube
+   * 1) Izveido Google izklājlapu ar kolonnām:
+   *    Diena,Laiks,Nosaukums,Apraksts,Grupa,YouTube,Veids
    *    (paraugs failā dienas-plans-template.csv — importē to izklājlapā).
-   *    Grupa kolonna: tukša = parasts notikums visiem; "Paralēli" =
-   *    dievkalpojums ar trim grupu birkām; JEBKURA cita vērtība (Bērniem,
-   *    Vīriem, Pieaugušajiem ...) = aktivitātes kategorija, kas apvienojas
-   *    ar citām tā paša laika kategorijām vienā "Dienas aktivitātes" kartītē.
-   *    YouTube kolonnā vari ielikt tiešraides vai ieraksta saiti —
-   *    pie notikuma parādīsies poga "Skatīties YouTube".
+   *    Kolonnas atpazīst pēc nosaukumiem galvenē, tāpēc to secība nav svarīga.
+   *    Grupa: tukša = parasts notikums visiem; "Paralēli" = dievkalpojums ar
+   *    trim grupu birkām; JEBKURA cita vērtība (Bērniem, Vīriem,
+   *    Pieaugušajiem ...) = aktivitātes kategorija, kas apvienojas ar citām
+   *    tā paša laika kategorijām vienā "Dienas aktivitātes" kartītē.
+   *    YouTube: tiešraides vai ieraksta saite — pie notikuma parādīsies
+   *    poga "Skatīties YouTube".
+   *    Veids (neobligāts): Dievkalpojums / Ēdienreize / Aktivitāte / Lūgšanas —
+   *    katram veidam sava krāsu svītra kartītes kreisajā malā.
    * 2) Izklājlapā: Fails → Kopīgot → Publicēt tīmeklī → formāts CSV.
    * 3) Nokopēto adresi ielīmē šeit starp pēdiņām.
    *

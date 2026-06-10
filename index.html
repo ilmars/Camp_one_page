@@ -60,6 +60,11 @@ h1{font-size:clamp(2.3rem,7vw,3.8rem);font-weight:900;line-height:1.05;letter-sp
 .event:nth-child(6){animation-delay:.15s}.event:nth-child(7){animation-delay:.18s}
 .event:nth-child(8){animation-delay:.21s}.event:nth-child(9){animation-delay:.24s}
 .event:nth-child(10){animation-delay:.27s}
+/* Notikuma veida krāsu svītra kreisajā malā */
+.event.type-dievkalpojums{border-left:3px solid var(--accent)}
+.event.type-edienreize{border-left:3px solid #d9a13b}
+.event.type-aktivitate{border-left:3px solid #3a8fb7}
+.event.type-lugsanas{border-left:3px solid #8a6cb0}
 .time{font-weight:800;color:var(--accent);min-width:54px;font-size:.95rem;padding-top:1px}
 .event-body{flex:1}
 .event-body h3{font-size:1rem;font-weight:700}
@@ -238,38 +243,38 @@ function renderStatic(){
 /* ===== Iebūvētais dienas plāns (rezerve, ja izklājlapa nav pieejama) ===== */
 function fullDay(){
   return [
-    {time:'8:00',  title:'Rīta lūgšanas'},
-    {time:'8:30',  title:'Brokastis'},
-    {time:'10:00', title:'Rīta dievkalpojums', parallel:true},
-    {time:'13:00', title:'Pusdienas'},
-    {time:'14:00', title:'Dienas aktivitātes', cats:[
+    {time:'8:00',  title:'Rīta lūgšanas', type:'lugsanas'},
+    {time:'8:30',  title:'Brokastis', type:'edienreize'},
+    {time:'10:00', title:'Rīta dievkalpojums', parallel:true, type:'dievkalpojums'},
+    {time:'13:00', title:'Pusdienas', type:'edienreize'},
+    {time:'14:00', title:'Dienas aktivitātes', type:'aktivitate', cats:[
       {label:'Bērniem',    activity:'Spēles un radošās darbnīcas'},
       {label:'Jauniešiem', activity:'Sports un komandu spēles'},
       {label:'Vīriem',     activity:'Volejbols un sarunas'},
       {label:'Sievietēm',  activity:'Rokdarbi un pastaigas'}
     ]},
-    {time:'17:30', title:'Vakariņas'},
-    {time:'18:30', title:'Vakara dievkalpojums', parallel:true},
-    {time:'22:00', title:'Vakara uzkodas'},
-    {time:'22:30', title:'Nakts aktivitāte'}
+    {time:'17:30', title:'Vakariņas', type:'edienreize'},
+    {time:'18:30', title:'Vakara dievkalpojums', parallel:true, type:'dievkalpojums'},
+    {time:'22:00', title:'Vakara uzkodas', type:'edienreize'},
+    {time:'22:30', title:'Nakts aktivitāte', type:'aktivitate'}
   ];
 }
 
 const DEFAULT_DAYS = [
   {name:'Pirmdiena', ...DAY_META['Pirmdiena'], events:[
-    {time:'18:30', title:'Atklāšanas dievkalpojums', parallel:true},
-    {time:'22:00', title:'Vakara uzkodas'},
-    {time:'22:30', title:'Nakts aktivitāte'}
+    {time:'18:30', title:'Atklāšanas dievkalpojums', parallel:true, type:'dievkalpojums'},
+    {time:'22:00', title:'Vakara uzkodas', type:'edienreize'},
+    {time:'22:30', title:'Nakts aktivitāte', type:'aktivitate'}
   ]},
   {name:'Otrdiena',    ...DAY_META['Otrdiena'],    events:fullDay()},
   {name:'Trešdiena',   ...DAY_META['Trešdiena'],   events:fullDay()},
   {name:'Ceturtdiena', ...DAY_META['Ceturtdiena'], events:fullDay()},
   {name:'Piektdiena',  ...DAY_META['Piektdiena'],  events:fullDay()},
   {name:'Sestdiena',   ...DAY_META['Sestdiena'],   events:[
-    {time:'8:00',  title:'Rīta lūgšanas'},
-    {time:'8:30',  title:'Brokastis'},
-    {time:'10:00', title:'Noslēguma dievkalpojums', desc:'Visas grupas kopā — nometnes noslēgums'},
-    {time:'13:00', title:'Pusdienas un došanās mājās'}
+    {time:'8:00',  title:'Rīta lūgšanas', type:'lugsanas'},
+    {time:'8:30',  title:'Brokastis', type:'edienreize'},
+    {time:'10:00', title:'Noslēguma dievkalpojums', desc:'Visas grupas kopā — nometnes noslēgums', type:'dievkalpojums'},
+    {time:'13:00', title:'Pusdienas un došanās mājās', type:'edienreize'}
   ]}
 ];
 
@@ -291,25 +296,53 @@ function parseCSV(text){
   return rows;
 }
 
+// "Ēdienreizes" / "ēdienreize" / "Edienreize" -> 'edienreize' utt.
+function eventType(s){
+  s = (s || '').trim().toLowerCase();
+  if (s.indexOf('dievkalp') === 0) return 'dievkalpojums';
+  if (s.indexOf('ēdien') === 0 || s.indexOf('edien') === 0) return 'edienreize';
+  if (s.indexOf('aktivit') === 0) return 'aktivitate';
+  if (s.indexOf('lūgšan') === 0 || s.indexOf('lugsan') === 0) return 'lugsanas';
+  return '';
+}
+
 function buildDays(rows){
-  rows = rows.slice(1); // izlaiž virsraksta rindu
+  if (!rows.length) return [];
+  // Kolonnas atpazīst pēc galvenes nosaukumiem; ja galvene nav atpazīstama,
+  // pieņem klasisko secību Diena,Laiks,Nosaukums,Apraksts,Grupa,YouTube,Veids.
+  const header = rows[0].map(h => (h || '').trim().toLowerCase());
+  let idx = {
+    diena: header.indexOf('diena'), laiks: header.indexOf('laiks'),
+    nosaukums: header.indexOf('nosaukums'), apraksts: header.indexOf('apraksts'),
+    grupa: header.indexOf('grupa'), youtube: header.indexOf('youtube'),
+    veids: header.indexOf('veids')
+  };
+  if (idx.diena < 0 || idx.laiks < 0 || idx.nosaukums < 0) {
+    idx = {diena:0, laiks:1, nosaukums:2, apraksts:3, grupa:4, youtube:5, veids:6};
+  }
+  const cell = (r, i) => (i >= 0 && r[i] ? r[i] : '').trim();
+
   const days = [], byName = {};
-  for (const r of rows) {
-    const [diena, laiks, nosaukums, apraksts, grupa, youtube] = [0,1,2,3,4,5].map(i => (r[i] || '').trim());
+  for (const r of rows.slice(1)) {
+    const diena = cell(r, idx.diena), laiks = cell(r, idx.laiks), nosaukums = cell(r, idx.nosaukums);
+    const apraksts = cell(r, idx.apraksts), grupa = cell(r, idx.grupa), youtube = cell(r, idx.youtube);
+    const tips = eventType(cell(r, idx.veids));
     if (!diena || !laiks || !nosaukums) continue;
     if (!byName[diena]) {
       byName[diena] = {name: diena, ...(DAY_META[diena] || {}), events: []};
       days.push(byName[diena]);
     }
     const day = byName[diena];
-    if (grupa && !/paral/i.test(grupa)) {
-      // Jebkura grupa (Bērniem, Vīriem, Pieaugušajiem ...) kļūst par kategoriju
-      // kopīgajā tā paša laika "Dienas aktivitātes" kartītē.
+    const irKategorija = grupa && !/paral/i.test(grupa) && (tips === 'aktivitate' || tips === '');
+    if (irKategorija) {
+      // Aktivitāte ar grupu (Bērniem, Vīriem, Pieaugušajiem ...) kļūst par
+      // kategoriju kopīgajā tā paša laika "Dienas aktivitātes" kartītē.
       let ev = day.events.find(e => e.time === laiks && e.cats);
-      if (!ev) { ev = {time: laiks, title: 'Dienas aktivitātes', cats: []}; day.events.push(ev); }
+      if (!ev) { ev = {time: laiks, title: 'Dienas aktivitātes', cats: [], type: 'aktivitate'}; day.events.push(ev); }
       ev.cats.push({label: grupa, activity: nosaukums, desc: apraksts || undefined});
     } else {
-      day.events.push({time: laiks, title: nosaukums, desc: apraksts || undefined, parallel: /paral/i.test(grupa),
+      day.events.push({time: laiks, title: nosaukums, desc: apraksts || undefined,
+                       parallel: /paral/i.test(grupa), type: tips || undefined,
                        yt: /^https?:\/\//i.test(youtube) ? youtube : undefined});
     }
   }
@@ -330,7 +363,7 @@ function renderDay(i, updateHash){
   let html = '<div class="day-head"><h2>' + esc(day.name) + (day.date ? ', ' + esc(day.date) : '') + '</h2>' +
              (day.sub ? '<p>' + esc(day.sub) + '</p>' : '') + '</div>';
   for (const ev of day.events) {
-    html += '<div class="event"><div class="time">' + esc(ev.time) + '</div><div class="event-body">' +
+    html += '<div class="event' + (ev.type ? ' type-' + ev.type : '') + '"><div class="time">' + esc(ev.time) + '</div><div class="event-body">' +
             '<h3>' + esc(ev.title) + '</h3>' +
             (ev.desc ? '<p class="desc">' + esc(ev.desc) + '</p>' : '');
     if (ev.parallel) {
