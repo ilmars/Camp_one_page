@@ -38,8 +38,12 @@ const CONFIG = {
    *    "Pieaugušie un jaunieši; Svētdienas skola (3–11 g.)" → divas birkas.
    *    YouTube: tiešraides vai ieraksta saite — pie notikuma parādīsies
    *    poga "Skatīties YouTube".
-   *    Veids (neobligāts): Dievkalpojums / Ēdienreize / Aktivitāte / Lūgšanas —
-   *    katram veidam sava krāsu svītra kartītes kreisajā malā.
+   *    Veids (neobligāts): Dievkalpojums / Ēdienreize / Lūgšanas / Seminārs /
+   *    Aktivitāte — katram veidam sava krāsu svītra kartītes kreisajā malā.
+   *    Aktivitāšu veidiem teksts kļūst par grupas kartītes virsrakstu:
+   *    rindas ar vienādu dienu, laiku un veidu (piem., "Nakts aktivitātes")
+   *    sagrupējas vienā kartītē — kastītes nosaukums ir Grupa (ja norādīta)
+   *    vai notikuma nosaukums. Viena aktivitāte bez grupas paliek parasta kartīte.
    *    Aktīvs (neobligāta kolonna): ja tāda ir, lapā rāda tikai rindas ar
    *    TRUE (ērti ar izvēles rūtiņām — ieķeksētās rindas redzamas, pārējās nē).
    *    Vieta (neobligāta kolonna): norises vieta — rādās ar kartes marķiera

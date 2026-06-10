@@ -71,6 +71,7 @@ h1{font-size:clamp(2.3rem,7vw,3.8rem);font-weight:900;line-height:1.05;letter-sp
 .event.type-edienreize{border-left:3px solid #d9a13b}
 .event.type-aktivitate{border-left:3px solid #3a8fb7}
 .event.type-lugsanas{border-left:3px solid #8a6cb0}
+.event.type-seminars{border-left:3px solid #2a9d8f}
 .time{font-weight:800;color:var(--accent);min-width:54px;font-size:.95rem;padding-top:1px}
 .event-body{flex:1}
 .event-body h3{font-size:1rem;font-weight:700}
@@ -311,9 +312,18 @@ function eventType(s){
   s = (s || '').trim().toLowerCase();
   if (s.indexOf('dievkalp') === 0) return 'dievkalpojums';
   if (s.indexOf('ēdien') === 0 || s.indexOf('edien') === 0) return 'edienreize';
-  if (s.indexOf('aktivit') === 0) return 'aktivitate';
+  if (s.indexOf('aktivit') >= 0) return 'aktivitate'; // arī "Dienas aktivitātes", "Nakts aktivitāte"
   if (s.indexOf('lūgšan') === 0 || s.indexOf('lugsan') === 0) return 'lugsanas';
+  if (s.indexOf('semin') === 0) return 'seminars';
   return '';
+}
+
+// Grupas kartītes virsraksts no Veids kolonnas teksta:
+// "Dienas aktivitātes" -> kā rakstīts; vienkāršs "Aktivitāte(s)" vai tukšs -> "Dienas aktivitātes"
+function aktTitle(veidsRaw){
+  const raw = (veidsRaw || '').trim();
+  if (!raw || /^aktivit(ā|a)te(s)?$/i.test(raw)) return 'Dienas aktivitātes';
+  return raw.charAt(0).toUpperCase() + raw.slice(1);
 }
 
 function buildDays(rows){
@@ -348,13 +358,25 @@ function buildDays(rows){
       days.push(byName[diena]);
     }
     const day = byName[diena];
-    const irKategorija = grupa && !/paral/i.test(grupa) && (tips === 'aktivitate' || tips === '');
-    if (irKategorija) {
-      // Aktivitāte ar grupu (Bērniem, Vīriem, Pieaugušajiem ...) kļūst par
-      // kategoriju kopīgajā tā paša laika "Dienas aktivitātes" kartītē.
-      let ev = day.events.find(e => e.time === laiks && e.cats);
-      if (!ev) { ev = {time: laiks, title: 'Dienas aktivitātes', cats: [], type: 'aktivitate'}; day.events.push(ev); }
-      ev.cats.push({label: grupa, activity: nosaukums, desc: apraksts || undefined, vieta: vieta || undefined});
+    const irGrupasKategorija = grupa && !/paral/i.test(grupa) && tips === '';
+    if (tips === 'aktivitate' || irGrupasKategorija) {
+      // Aktivitātes ar vienādu dienu, laiku un veidu sagrupējas vienā kartītē.
+      // Kartītes virsraksts = Veids kolonnas teksts ("Dienas aktivitātes",
+      // "Nakts aktivitātes" ...). Kastītes nosaukums = Grupa (ja ir) vai
+      // notikuma nosaukums.
+      const veidsRaw = idx.veids >= 0 ? cell(r, idx.veids) : '';
+      const key = laiks + '|' + veidsRaw.toLowerCase();
+      let ev = day.events.find(e => e.cats && e.gkey === key);
+      if (!ev) {
+        ev = {time: laiks, title: aktTitle(veidsRaw), cats: [], type: 'aktivitate', gkey: key};
+        day.events.push(ev);
+      }
+      if (grupa && !/paral/i.test(grupa)) {
+        ev.cats.push({label: grupa, activity: nosaukums, desc: apraksts || undefined,
+                      vieta: vieta || undefined, hasGrupa: true});
+      } else {
+        ev.cats.push({label: nosaukums, activity: apraksts || '', vieta: vieta || undefined, hasGrupa: false});
+      }
     } else {
       const ev = {time: laiks, title: nosaukums, desc: apraksts || undefined,
                   vieta: vieta || undefined, type: tips || undefined,
@@ -368,6 +390,17 @@ function buildDays(rows){
       }
       day.events.push(ev);
     }
+  }
+  // Ja "grupā" sanākusi tikai viena aktivitāte bez grupas — rāda kā parastu kartīti
+  for (const day of days) {
+    day.events = day.events.map(ev => {
+      if (ev.cats && ev.cats.length === 1 && !ev.cats[0].hasGrupa) {
+        const c = ev.cats[0];
+        return {time: ev.time, title: c.label, desc: c.activity || undefined,
+                vieta: c.vieta, type: 'aktivitate'};
+      }
+      return ev;
+    });
   }
   return days;
 }
@@ -396,7 +429,8 @@ function renderDay(i, updateHash){
     }
     if (ev.cats) {
       html += '<div class="cats">' + ev.cats.map(c =>
-        '<div class="cat"><b>' + esc(c.label) + '</b><span>' + esc(c.activity) + '</span>' +
+        '<div class="cat"><b>' + esc(c.label) + '</b>' +
+        (c.activity ? '<span>' + esc(c.activity) + '</span>' : '') +
         (c.desc ? '<i>' + esc(c.desc) + '</i>' : '') +
         (c.vieta ? '<i><svg class="icon"><use href="#i-pin"/></svg>' + esc(c.vieta) + '</i>' : '') + '</div>'
       ).join('') + '</div>';
