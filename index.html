@@ -267,15 +267,10 @@ function fullDay(){
     {time:'8:30',  title:'Brokastis', type:'edienreize'},
     {time:'10:00', title:'Rīta dievkalpojums', parallel:true, type:'dievkalpojums'},
     {time:'13:00', title:'Pusdienas', type:'edienreize'},
-    {time:'14:00', title:'Dienas aktivitātes', type:'aktivitate', cats:[
-      {label:'Bērniem',    activity:'Spēles un radošās darbnīcas'},
-      {label:'Jauniešiem', activity:'Sports un komandu spēles'},
-      {label:'Vīriem',     activity:'Volejbols un sarunas'},
-      {label:'Sievietēm',  activity:'Rokdarbi un pastaigas'}
-    ]},
+    {time:'14:00', title:'Dienas aktivitātes', type:'aktivitate', cats:[]},
     {time:'17:30', title:'Vakariņas', type:'edienreize'},
     {time:'18:30', title:'Vakara dievkalpojums', parallel:true, type:'dievkalpojums'},
-    {time:'22:00', title:'Vakara uzkodas', type:'edienreize'},
+    {time:'22:00', title:'Naksniņas', type:'edienreize'},
     {time:'22:30', title:'Nakts aktivitāte', type:'aktivitate'}
   ];
 }
@@ -283,7 +278,7 @@ function fullDay(){
 const DEFAULT_DAYS = [
   {name:'Pirmdiena', ...DAY_META['Pirmdiena'], events:[
     {time:'18:30', title:'Atklāšanas dievkalpojums', parallel:true, type:'dievkalpojums'},
-    {time:'22:00', title:'Vakara uzkodas', type:'edienreize'},
+    {time:'22:00', title:'Naksniņas', type:'edienreize'},
     {time:'22:30', title:'Nakts aktivitāte', type:'aktivitate'}
   ]},
   {name:'Otrdiena',    ...DAY_META['Otrdiena'],    events:fullDay()},
