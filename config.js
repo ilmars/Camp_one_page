@@ -6,7 +6,7 @@
 const CONFIG = {
 
   /* ===== Pamatinformācija ===== */
-  "nosaukums": "Draudzes nometne",
+  "nosaukums": "Aspolītā zeme",
   "datumi": "21.–26. jūnijs",
   "vieta": "Norkalni",
 
@@ -16,7 +16,7 @@ const CONFIG = {
    * nosaukums tāpat paliks lapas cilnē un kājenē.
    * Ar "heroVirsraksts" vari hero zonā rādīt arī citu tekstu nekā "nosaukums". */
   "logo": "",
-  "heroVirsraksts": "Draudzes nometne",
+  "heroVirsraksts": "Dieva Mājas nometne 2026",
 
   /* Grupu žetoni lapas augšā */
   "grupas": ["Pieaugušie", "Jaunieši (no 12 g.)", "Svētdienas skola (3–11 g.)"],
