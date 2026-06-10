@@ -31,7 +31,7 @@ jobs:
       - name: Prepare site files
         run: |
           mkdir -p public
-          cp index.html config.js dienas-plans.csv dienas-plans-template.csv public/
+          cp index.html config.js dienas-plans.csv dienas-plans-template.csv favicon.png apple-touch-icon.png public/
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
