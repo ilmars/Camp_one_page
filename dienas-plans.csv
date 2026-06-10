@@ -1,53 +1,45 @@
-﻿Diena,Laiks,Nosaukums,Apraksts,Grupa,YouTube
-Pirmdiena,18:30,Atklāšanas dievkalpojums,,Paralēli,
-Pirmdiena,22:00,Naksniņas,,,
-Pirmdiena,22:30,Nakts aktivitāte,,,
-Otrdiena,8:00,Rīta lūgšanas,Lielajā teltī,,
-Otrdiena,8:30,Brokastis,,,
-Otrdiena,10:00,Rīta dievkalpojums,,Paralēli,
-Otrdiena,13:00,Pusdienas,,,
-Otrdiena,14:00,Aktivitātes,,Visi,
-Otrdiena,17:30,Vakariņas,,,
-Otrdiena,18:30,Vakara dievkalpojums,,Paralēli,
-Otrdiena,22:00,Naksniņas,,,
-Otrdiena,22:30,Nakts aktivitāte,,,
-Trešdiena,8:00,Rīta lūgšanas,,,
-Trešdiena,8:30,Brokastis,,,
-Trešdiena,10:00,Rīta dievkalpojums,,Paralēli,
-Trešdiena,13:00,Pusdienas,,,
-Trešdiena,14:00,Spēles un radošās darbnīcas,,Bērniem,
-Trešdiena,14:00,Sports un komandu spēles,,Jauniešiem,
-Trešdiena,14:00,Volejbols un sarunas,,Vīriem,
-Trešdiena,14:00,Rokdarbi un pastaigas,,Sievietēm,
-Trešdiena,17:30,Vakariņas,,,
-Trešdiena,18:30,Vakara dievkalpojums,,Paralēli,
-Trešdiena,22:00,Naksniņas,,,
-Trešdiena,22:30,Nakts aktivitāte,,,
-Ceturtdiena,8:00,Rīta lūgšanas,,,
-Ceturtdiena,8:30,Brokastis,,,
-Ceturtdiena,10:00,Rīta dievkalpojums,,Paralēli,
-Ceturtdiena,13:00,Pusdienas,,,
-Ceturtdiena,14:00,Spēles un radošās darbnīcas,,Bērniem,
-Ceturtdiena,14:00,Sports un komandu spēles,,Jauniešiem,
-Ceturtdiena,14:00,Volejbols un sarunas,,Vīriem,
-Ceturtdiena,14:00,Rokdarbi un pastaigas,,Sievietēm,
-Ceturtdiena,17:30,Vakariņas,,,
-Ceturtdiena,18:30,Vakara dievkalpojums,,Paralēli,
-Ceturtdiena,22:00,Naksniņas,,,
-Ceturtdiena,22:30,Nakts aktivitāte,,,
-Piektdiena,8:00,Rīta lūgšanas,,,
-Piektdiena,8:30,Brokastis,,,
-Piektdiena,10:00,Rīta dievkalpojums,,Paralēli,
-Piektdiena,13:00,Pusdienas,,,
-Piektdiena,14:00,Spēles un radošās darbnīcas,,Bērniem,
-Piektdiena,14:00,Sports un komandu spēles,,Jauniešiem,
-Piektdiena,14:00,Volejbols un sarunas,,Vīriem,
-Piektdiena,14:00,Rokdarbi un pastaigas,,Sievietēm,
-Piektdiena,17:30,Vakariņas,,,
-Piektdiena,18:30,Vakara dievkalpojums,,Paralēli,
-Piektdiena,22:00,Naksniņas,,,
-Piektdiena,22:30,Nakts aktivitāte,,,
-Sestdiena,8:00,Rīta lūgšanas,,,
-Sestdiena,8:30,Brokastis,,,
-Sestdiena,10:00,Noslēguma dievkalpojums,Visas grupas kopā — nometnes noslēgums,,
-Sestdiena,13:00,Pusdienas un došanās mājās,,,
+Diena,Laiks,Nosaukums,Apraksts,Grupa,YouTube,Veids
+Pirmdiena,18:30,Atklāšanas dievkalpojums,,Paralēli,,Dievkalpojums
+Pirmdiena,22:00,Naksniņas,,,,Ēdienreize
+Pirmdiena,22:30,Nakts aktivitāte,,,,Aktivitāte
+Otrdiena,08:30,Rīta lūgšanas,,,,Lūgšanas
+Otrdiena,09:00,Brokastis,,,,Ēdienreize
+Otrdiena,10:00,Rīta dievkalpojums,,,,Dievkalpojums
+Otrdiena,13:00,Pusdienas,,,,Ēdienreize
+Otrdiena,14:00,Dienas aktivitātes,,,,Aktivitāte
+Otrdiena,16:00,Dienas aktivitātes,,,,Aktivitāte
+Otrdiena,17:30,Vakariņas,,,,Ēdienreize
+Otrdiena,18:30,Vakara dievkalpojums,,Paralēli,,Dievkalpojums
+Otrdiena,22:00,Naksniņas,,,,Ēdienreize
+Otrdiena,22:30,Nakts aktivitāte,,,,Aktivitāte
+Trešdiena,08:30,Rīta lūgšanas,,,,Lūgšanas
+Trešdiena,09:00,Brokastis,,,,Ēdienreize
+Trešdiena,10:00,Rīta dievkalpojums kopā ar Jauniešiem,,Pieaugušie un Jaunieši; Svētdienas skola (3–11 g.),,Dievkalpojums
+Trešdiena,13:00,Pusdienas,,,,Ēdienreize
+Trešdiena,14:00,Dienas aktivitātes,,,,Aktivitāte
+Trešdiena,17:30,Vakariņas,,,,Ēdienreize
+Trešdiena,18:30,Vakara dievkalpojums,,Paralēli,,Dievkalpojums
+Trešdiena,22:00,Naksniņas,,,,Ēdienreize
+Trešdiena,22:30,Nakts aktivitāte,,,,Aktivitāte
+Ceturtdiena,08:30,Rīta lūgšanas,,,,Lūgšanas
+Ceturtdiena,09:00,Brokastis,,,,Ēdienreize
+Ceturtdiena,10:00,Rīta dievkalpojums,,Paralēli,,Dievkalpojums
+Ceturtdiena,13:00,Pusdienas,,,,Ēdienreize
+Ceturtdiena,14:00,Dienas aktivitātes,,,,Aktivitāte
+Ceturtdiena,17:30,Vakariņas,,,,Ēdienreize
+Ceturtdiena,18:30,Vakara dievkalpojums,,Paralēli,,Dievkalpojums
+Ceturtdiena,22:00,Naksniņas,,,,Ēdienreize
+Ceturtdiena,22:30,Nakts aktivitāte,,,,Aktivitāte
+Piektdiena,08:30,Rīta lūgšanas,,,,Lūgšanas
+Piektdiena,09:00,Brokastis,,,,Ēdienreize
+Piektdiena,10:00,Rīta dievkalpojums,,Paralēli,,Dievkalpojums
+Piektdiena,13:00,Pusdienas,,,,Ēdienreize
+Piektdiena,14:00,Dienas aktivitātes,,,,Aktivitāte
+Piektdiena,17:30,Vakariņas,,,,Ēdienreize
+Piektdiena,18:30,Vakara dievkalpojums,,Paralēli,,Dievkalpojums
+Piektdiena,22:00,Naksniņas,,,,Ēdienreize
+Piektdiena,22:30,Nakts aktivitāte,,,,Aktivitāte
+Sestdiena,08:30,Rīta lūgšanas,,,,Lūgšanas
+Sestdiena,09:00,Brokastis,,,,Ēdienreize
+Sestdiena,10:00,Noslēguma dievkalpojums,Visas grupas kopā — nometnes noslēgums,,,Dievkalpojums
+Sestdiena,13:00,Pusdienas un došanās mājās,,,,Ēdienreize

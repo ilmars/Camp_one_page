@@ -300,6 +300,7 @@ const DEFAULT_DAYS = [
 
 /* ===== Plāna ielāde no Google izklājlapas CSV ===== */
 function parseCSV(text){
+  text = text.replace(/^\uFEFF/, ''); // noņem BOM, lai galvenes atpazīšana nesalūst
   const rows = []; let row = [], cell = '', q = false;
   for (let i = 0; i < text.length; i++) {
     const ch = text[i];
