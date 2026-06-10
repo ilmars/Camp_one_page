@@ -321,7 +321,8 @@ function buildDays(rows){
     diena: header.indexOf('diena'), laiks: header.indexOf('laiks'),
     nosaukums: header.indexOf('nosaukums'), apraksts: header.indexOf('apraksts'),
     grupa: header.indexOf('grupa'), youtube: header.indexOf('youtube'),
-    veids: header.indexOf('veids')
+    veids: header.indexOf('veids'),
+    aktivs: Math.max(header.indexOf('aktīvs'), header.indexOf('aktivs'))
   };
   if (idx.diena < 0 || idx.laiks < 0 || idx.nosaukums < 0) {
     idx = {diena:0, laiks:1, nosaukums:2, apraksts:3, grupa:4, youtube:5, veids:6};
@@ -334,6 +335,8 @@ function buildDays(rows){
     const apraksts = cell(r, idx.apraksts), grupa = cell(r, idx.grupa), youtube = cell(r, idx.youtube);
     const tips = eventType(cell(r, idx.veids));
     if (!diena || !laiks || !nosaukums) continue;
+    // Ja izklājlapā ir kolonna "Aktīvs", rāda tikai rindas ar TRUE
+    if (idx.aktivs >= 0 && !/^(true|patiess|jā|ja|1|x)$/i.test(cell(r, idx.aktivs))) continue;
     if (!byName[diena]) {
       byName[diena] = {name: diena, ...(DAY_META[diena] || {}), events: []};
       days.push(byName[diena]);

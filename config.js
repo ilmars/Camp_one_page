@@ -40,6 +40,8 @@ const CONFIG = {
    *    poga "Skatīties YouTube".
    *    Veids (neobligāts): Dievkalpojums / Ēdienreize / Aktivitāte / Lūgšanas —
    *    katram veidam sava krāsu svītra kartītes kreisajā malā.
+   *    Aktīvs (neobligāta kolonna): ja tāda ir, lapā rāda tikai rindas ar
+   *    TRUE (ērti ar izvēles rūtiņām — ieķeksētās rindas redzamas, pārējās nē).
    * 2) Izklājlapā: Fails → Kopīgot → Publicēt tīmeklī → formāts CSV.
    * 3) Nokopēto adresi ielīmē šeit starp pēdiņām.
    *
