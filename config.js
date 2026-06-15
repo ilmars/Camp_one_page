@@ -84,7 +84,7 @@ const CONFIG = {
   ],
 
   /* ===== Bildes ===== */
-  "heroBilde": "https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?auto=format&fit=crop&w=1600&q=80",
+  "heroBilde": "header.jpg",
   "galerijasVirsraksts": "Mirkļi no nometnes",
   "galerija": [
     "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?auto=format&fit=crop&w=800&q=80",
