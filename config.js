@@ -100,7 +100,8 @@ const CONFIG = {
     { "loma": "Nometnes vadītājs",      "vards": "Vārds Uzvārds", "telefons": "+371 20 000 000" },
     { "loma": "Svētdienas skola",       "vards": "Vārds Uzvārds", "telefons": "+371 20 000 000" },
     { "loma": "Jaunieši",               "vards": "Vārds Uzvārds", "telefons": "+371 20 000 000" },
-    { "loma": "Saimniecības jautājumi", "vards": "Vārds Uzvārds", "telefons": "+371 20 000 000" }
+    { "loma": "Saimnieciskie jautājumi", "vards": "Vārds Uzvārds", "telefons": "+371 20 000 000" },
+    { "loma": "Medmāsa",                "vards": "Vārds Uzvārds", "telefons": "+371 20 000 000" }
   ],
 
   /* ===== Kājene (nosaukums tiek pielikts automātiski priekšā) ===== */
