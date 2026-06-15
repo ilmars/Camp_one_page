@@ -87,9 +87,9 @@ const CONFIG = {
   "heroBilde": "header.jpg",
   "galerijasVirsraksts": "Mirkļi no nometnes",
   "galerija": [
-    "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1470770841072-f978cf4d019e?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?auto=format&fit=crop&w=800&q=80"
+    "TH1.jpg",
+    "TH2.jpg",
+    "TH3.jpg"
   ],
   "fotoSaitesTeksts": "Visas nometnes bildes",
   "fotoAlbumaSaite": "#",
