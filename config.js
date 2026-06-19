@@ -117,12 +117,13 @@ const CONFIG = {
    * Ja "lokacijas" tukšs, visa kartes sadaļa pazūd.
    * UZMANĪBU: zemāk ir PARAUGA koordinātes — aizvieto ar īstajām! */
   "karteVirsraksts": "Nometnes karte",
-  "karteTuvinajums": 16,
+  "karteTuvinajums": 17,
   "lokacijas": [
-    { "nosaukums": "Lielā telts",     "koord": [56.9496, 24.6019] },
-    { "nosaukums": "Ēdamzāle",        "koord": [56.9501, 24.6028] },
-    { "nosaukums": "Dāvida nams",     "koord": [56.9489, 24.6011] },
-    { "nosaukums": "Futbola laukums", "koord": [56.9508, 24.6035] }
+    { "nosaukums": "Lielā telts",          "koord": [56.955619803932635, 24.589514465373902] },
+    { "nosaukums": "Ēdnīca",               "koord": [56.95593582869828, 24.58627823657708] },
+    { "nosaukums": "Jauniešu zāle",        "koord": [56.95604952651114, 24.586614540715505] },
+    { "nosaukums": "Dāvida nams (1. stāvs)","koord": [56.95561363333486, 24.58823491286611] },
+    { "nosaukums": "Mājiņas",              "koord": [56.95551876368299, 24.586149086409307] }
   ],
 
   /* ===== Kājene (nosaukums tiek pielikts automātiski priekšā) ===== */
