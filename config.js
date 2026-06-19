@@ -7,7 +7,7 @@ const CONFIG = {
 
   /* ===== Pamatinformācija ===== */
   "nosaukums": "Dieva Mājas nometne 2026",
-  "datumi": "21.–26. jūnijs",
+  "datumi": "22.–27. jūnijs",
   "vieta": "Norkalni",
 
   /* Nometnes logo virsraksta zonā (attēla adrese, piem., "logo.png" vai pilns URL).
@@ -61,12 +61,12 @@ const CONFIG = {
 
   /* Dienu datumi un piezīmes (datums formātā DD.MM) */
   "dienas": {
-    "Pirmdiena":   { "datums": "21.06", "piezime": "Ierašanās diena" },
-    "Otrdiena":    { "datums": "22.06" },
-    "Trešdiena":   { "datums": "23.06" },
-    "Ceturtdiena": { "datums": "24.06" },
-    "Piektdiena":  { "datums": "25.06" },
-    "Sestdiena":   { "datums": "26.06", "piezime": "Noslēguma diena" }
+    "Pirmdiena":   { "datums": "22.06", "piezime": "Ierašanās diena" },
+    "Otrdiena":    { "datums": "23.06" },
+    "Trešdiena":   { "datums": "24.06" },
+    "Ceturtdiena": { "datums": "25.06" },
+    "Piektdiena":  { "datums": "26.06" },
+    "Sestdiena":   { "datums": "27.06", "piezime": "Noslēguma diena" }
   },
 
   /* ===== Programmu apraksti (informatīvā sadaļa zem dienas plāna) =====
@@ -97,13 +97,13 @@ const CONFIG = {
   /* ===== Kontakti ===== */
   "kontaktuVirsraksts": "Kontakti",
   "kontakti": [
-    { "loma": "Nometnes vadītājs",      "vards": "Vārds Uzvārds", "telefons": "+371 20 000 000" },
-    { "loma": "Svētdienas skola",       "vards": "Vārds Uzvārds", "telefons": "+371 20 000 000" },
-    { "loma": "Jaunieši",               "vards": "Vārds Uzvārds", "telefons": "+371 20 000 000" },
-    { "loma": "Saimnieciskie jautājumi", "vards": "Vārds Uzvārds", "telefons": "+371 20 000 000" },
-    { "loma": "Medmāsa",                "vards": "Vārds Uzvārds", "telefons": "+371 20 000 000" }
+    { "loma": "Nometnes vadītājs",      "vards": "Kristaps Āboltiņš", "telefons": "+371 29 966 307" },
+    { "loma": "Svētdienas skola",       "vards": "Ilmārs Lazdiņš", "telefons": "+371 26 667 647" },
+    { "loma": "Jaunieši",               "vards": "Alesha Nutter", "telefons": "+371 27 542 001" },
+    { "loma": "Saimnieciskie jautājumi", "vards": "Andrējs Gūtmanis", "telefons": "+371 26 161 351" },
+    { "loma": "Medmāsa",                "vards": "Iveta Ivaško", "telefons": "+371 25 139 820" }
   ],
 
   /* ===== Kājene (nosaukums tiek pielikts automātiski priekšā) ===== */
-  "kajene": "21.–26. jūnijs, Norkalni | Dieva Mājas 2026"
+  "kajene": "22.–27. jūnijs, Norkalni | Dieva Mājas 2026"
 };
