@@ -85,8 +85,9 @@ h1{font-family:'Oswald','Archivo',sans-serif;font-size:clamp(2.8rem,10vw,5.2rem)
 .tag{font-size:.74rem;background:var(--accent-soft);color:var(--accent);border-radius:999px;padding:3px 10px;font-weight:600}
 .cats{display:grid;grid-template-columns:repeat(auto-fit,minmax(155px,1fr));gap:8px;margin-top:10px}
 .cat{background:#f7f7f2;border:1px solid var(--line);border-radius:12px;padding:10px 12px}
-.cat b{display:block;font-size:.84rem}
-.cat span{font-size:.78rem;color:var(--muted)}
+.cat-tag{display:block;font-size:.68rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--accent);margin-bottom:2px}
+.cat b{display:block;font-size:.88rem;font-weight:600;color:var(--ink);line-height:1.25}
+.cat-desc{display:block;font-size:.78rem;color:var(--muted);margin-top:2px}
 .cat-vieta{display:flex;align-items:center;gap:5px;font-size:.74rem;color:#85857c;font-style:normal;margin-top:2px;text-decoration:none}
 .cat-vieta .icon{color:var(--accent)}
 .ev-vieta .icon,.cat-vieta .icon{flex:0 0 auto}
@@ -465,10 +466,10 @@ function buildDays(rows){
         day.events.push(ev);
       }
       if (grupa && !/paral/i.test(grupa)) {
-        ev.cats.push({label: grupa, activity: nosaukums, desc: apraksts || undefined,
+        ev.cats.push({tag: grupa, title: nosaukums, desc: apraksts || undefined,
                       vieta: vieta || undefined, hasGrupa: true});
       } else {
-        ev.cats.push({label: nosaukums, activity: apraksts || '', vieta: vieta || undefined, hasGrupa: false});
+        ev.cats.push({title: nosaukums, desc: apraksts || undefined, vieta: vieta || undefined, hasGrupa: false});
       }
     } else {
       const ev = {time: laiks, title: nosaukums, desc: apraksts || undefined,
@@ -489,7 +490,7 @@ function buildDays(rows){
     day.events = day.events.map(ev => {
       if (ev.cats && ev.cats.length === 1 && !ev.cats[0].hasGrupa) {
         const c = ev.cats[0];
-        return {time: ev.time, title: c.label, desc: c.activity || undefined,
+        return {time: ev.time, title: c.title, desc: c.desc || undefined,
                 vieta: c.vieta, type: 'aktivitate'};
       }
       return ev;
@@ -525,9 +526,10 @@ function renderDay(i, updateHash){
     }
     if (ev.cats) {
       html += '<div class="cats">' + ev.cats.map(c =>
-        '<div class="cat"><b>' + esc(c.label) + '</b>' +
-        (c.activity ? '<span>' + esc(c.activity) + '</span>' : '') +
-        (c.desc ? '<i>' + esc(c.desc) + '</i>' : '') +
+        '<div class="cat">' +
+        (c.tag ? '<span class="cat-tag">' + esc(c.tag) + '</span>' : '') +
+        '<b>' + esc(c.title) + '</b>' +
+        (c.desc ? '<span class="cat-desc">' + esc(c.desc) + '</span>' : '') +
         (c.vieta ? vietaEl(c.vieta, 'cat-vieta') : '') + '</div>'
       ).join('') + '</div>';
     }
