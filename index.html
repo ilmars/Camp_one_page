@@ -87,9 +87,14 @@ h1{font-family:'Oswald','Archivo',sans-serif;font-size:clamp(2.8rem,10vw,5.2rem)
 .cat{background:#f7f7f2;border:1px solid var(--line);border-radius:12px;padding:10px 12px}
 .cat b{display:block;font-size:.84rem}
 .cat span{font-size:.78rem;color:var(--muted)}
-.cat i{display:block;font-size:.74rem;color:#85857c;font-style:normal;margin-top:2px}
-.cat i .icon{margin-right:4px;color:var(--accent)}
-.ev-vieta .icon,.cat i .icon{flex:0 0 auto}
+.cat-vieta{display:flex;align-items:center;gap:5px;font-size:.74rem;color:#85857c;font-style:normal;margin-top:2px;text-decoration:none}
+.cat-vieta .icon{color:var(--accent)}
+.ev-vieta .icon,.cat-vieta .icon{flex:0 0 auto}
+a.ev-vieta,a.cat-vieta{color:var(--muted)}
+a.cat-vieta{color:#85857c}
+.loc-anchor{cursor:pointer}
+.loc-anchor:hover{text-decoration:underline;color:var(--accent)}
+.loc-anchor:hover .icon{color:var(--accent)}
 @keyframes rise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
 
 /* ===== Section headings ===== */
@@ -218,6 +223,44 @@ function esc(s){
 function slug(s){
   const map = {'ā':'a','č':'c','ē':'e','ģ':'g','ī':'i','ķ':'k','ļ':'l','ņ':'n','š':'s','ū':'u','ž':'z'};
   return String(s).toLowerCase().replace(/[āčēģīķļņšūž]/g, c => map[c]).replace(/\s+/g, '-');
+}
+
+// Lokācijas teksta normalizēšana (mazie burti, bez garumzīmēm/pieturzīmēm)
+function normLoc(s){
+  const map = {'ā':'a','č':'c','ē':'e','ģ':'g','ī':'i','ķ':'k','ļ':'l','ņ':'n','š':'s','ū':'u','ž':'z'};
+  return String(s || '').toLowerCase().replace(/[āčēģīķļņšūž]/g, c => map[c])
+    .replace(/[^a-z0-9]+/g, ' ').trim();
+}
+
+// Atrod kartes lokāciju, kas atbilst notikuma vietas tekstam (panes locījumus, piem. "Lielajā teltī" -> "Lielā telts")
+function matchLokacija(text){
+  const list = C.lokacijas || [];
+  const na = normLoc(text);
+  if (!na || !list.length) return null;
+  const wa = na.split(' ').filter(Boolean);
+  let best = null, bestScore = 0;
+  for (const l of list) {
+    const nb = normLoc(l.nosaukums);
+    if (!nb) continue;
+    if (na === nb) return l;
+    const wb = nb.split(' ').filter(Boolean);
+    let matched = 0;
+    for (const w of wb) {
+      if (wa.some(x => (x.length >= 4 && w.length >= 4) ? x.slice(0, 4) === w.slice(0, 4) : x === w)) matched++;
+    }
+    const score = matched / wb.length;
+    if (score > bestScore) { bestScore = score; best = l; }
+  }
+  return bestScore >= 0.6 ? best : null;
+}
+
+// Vietas elements — saite uz karti, ja atbilst kādai lokācijai; citādi parasts teksts
+function vietaEl(text, baseClass){
+  const inner = '<svg class="icon"><use href="#i-pin"/></svg>' + esc(text);
+  const m = matchLokacija(text);
+  return m
+    ? '<a class="' + baseClass + ' loc-anchor" href="#karte-sec" data-loc="' + esc(m.nosaukums) + '">' + inner + '</a>'
+    : '<span class="' + baseClass + '">' + inner + '</span>';
 }
 
 /* ===== Statiskās sadaļas no konfigurācijas ===== */
@@ -476,7 +519,7 @@ function renderDay(i, updateHash){
     html += '<div class="event' + (ev.type ? ' type-' + ev.type : '') + '"><div class="time">' + esc(ev.time) + '</div><div class="event-body">' +
             '<h3>' + esc(ev.title) + '</h3>' +
             (ev.desc ? '<p class="desc">' + esc(ev.desc) + '</p>' : '') +
-            (ev.vieta ? '<p class="ev-vieta"><svg class="icon"><use href="#i-pin"/></svg>' + esc(ev.vieta) + '</p>' : '');
+            (ev.vieta ? vietaEl(ev.vieta, 'ev-vieta') : '');
     const tagi = ev.parallel ? PARALLEL : (ev.tags || []);
     if (tagi.length) {
       html += '<div class="tags">' + tagi.map(g => '<span class="tag">' + esc(g) + '</span>').join('') + '</div>';
@@ -486,7 +529,7 @@ function renderDay(i, updateHash){
         '<div class="cat"><b>' + esc(c.label) + '</b>' +
         (c.activity ? '<span>' + esc(c.activity) + '</span>' : '') +
         (c.desc ? '<i>' + esc(c.desc) + '</i>' : '') +
-        (c.vieta ? '<i><svg class="icon"><use href="#i-pin"/></svg>' + esc(c.vieta) + '</i>' : '') + '</div>'
+        (c.vieta ? vietaEl(c.vieta, 'cat-vieta') : '') + '</div>'
       ).join('') + '</div>';
     }
     if (ev.yt) {
@@ -542,26 +585,51 @@ async function loadCsv(url){
   return false;
 }
 
+let MAP = null;
+const MARKERS = {}; // normLoc(nosaukums) -> marker, lai saites var atvērt pareizo
+
 function initMap(){
   if (typeof L === 'undefined') return; // Leaflet nav ielādēts (piem., nav interneta)
   const lokacijas = (C.lokacijas || []).filter(l => Array.isArray(l.koord) && l.koord.length === 2);
   if (!lokacijas.length) return;
-  const map = L.map('karte', {scrollWheelZoom: false});
+  MAP = L.map('karte', {scrollWheelZoom: false});
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     maxZoom: 19, attribution: '&copy; OpenStreetMap'
-  }).addTo(map);
+  }).addTo(MAP);
   const markers = lokacijas.map(l => {
     const href = l.links || ('https://www.google.com/maps?q=' + l.koord[0] + ',' + l.koord[1]);
-    return L.marker(l.koord).addTo(map).bindPopup(
+    const m = L.marker(l.koord).addTo(MAP).bindPopup(
       '<b>' + esc(l.nosaukums || '') + '</b>' + (l.apraksts ? '<br>' + esc(l.apraksts) : '') +
       '<br><a href="' + esc(href) + '" target="_blank" rel="noopener">Atvērt kartē</a>');
+    MARKERS[normLoc(l.nosaukums)] = m;
+    return m;
   });
   if (markers.length > 1) {
-    map.fitBounds(L.featureGroup(markers).getBounds().pad(0.3));
+    map_fit(markers);
   } else {
-    map.setView(lokacijas[0].koord, C.karteTuvinajums || 15);
+    MAP.setView(lokacijas[0].koord, C.karteTuvinajums || 15);
   }
 }
+
+function map_fit(markers){
+  MAP.fitBounds(L.featureGroup(markers).getBounds().pad(0.3));
+}
+
+// Klikšķis uz vietas saites grafikā: ritina uz karti un atver attiecīgo marķieri
+function openLokacija(nosaukums){
+  const sec = document.getElementById('karte-sec');
+  if (sec) sec.scrollIntoView({behavior: 'smooth', block: 'start'});
+  const m = MARKERS[normLoc(nosaukums)];
+  if (m && MAP) {
+    setTimeout(() => { MAP.invalidateSize(); m.openPopup(); }, 500);
+  }
+}
+document.addEventListener('click', e => {
+  const a = e.target.closest('.loc-anchor');
+  if (!a) return;
+  e.preventDefault();
+  openLokacija(a.dataset.loc);
+});
 
 async function init(){
   renderStatic();
