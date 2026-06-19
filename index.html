@@ -34,15 +34,23 @@ h1,h2,h3,.kicker,.time,.daypill{font-family:'Archivo','Work Sans',system-ui,sans
 /* ===== Hero ===== */
 .hero{position:relative;overflow:hidden;background:#16301f}
 .hero-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
-.hero-overlay{position:absolute;inset:0;background:linear-gradient(180deg,rgba(13,28,18,.35),rgba(13,28,18,.78))}
-.hero-content{position:relative;padding:88px 0 52px;color:#fff}
-.kicker{font-size:.8rem;letter-spacing:.22em;text-transform:uppercase;font-weight:700;color:#9fe0b8;margin-bottom:12px}
+.hero-overlay{position:absolute;inset:0;background:linear-gradient(180deg,rgba(13,28,18,.55),rgba(13,28,18,.35) 40%,rgba(13,28,18,.78))}
+.hero-content{position:relative;padding:30px 0 36px;color:#fff;min-height:60vh;display:flex;flex-direction:column}
+/* Augšējā rinda: zīmols pa kreisi, sadaļa + gads pa labi */
+.hero-top{display:flex;justify-content:space-between;align-items:flex-start;gap:16px}
+.brand{font-family:'Anton',sans-serif;text-transform:uppercase;font-size:clamp(1.05rem,2.9vw,1.8rem);line-height:.9;letter-spacing:.02em}
+.hero-meta{display:flex;align-items:center;gap:14px;text-align:right}
+.hero-meta .sub{font-size:clamp(.95rem,2.3vw,1.45rem);font-weight:600;max-width:7.5em;line-height:1.1}
+.hero-meta .year{font-family:'Anton',sans-serif;font-size:clamp(1.1rem,3vw,1.9rem);line-height:.95;display:flex;flex-direction:column}
+/* Centrālā daļa: liels virsraksts un teksta vieta */
+.hero-center{flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:24px 0}
 .hero-logo{display:block;max-height:110px;max-width:min(70%,420px);margin-bottom:14px}
-h1{font-family:'Anton','Archivo',sans-serif;font-size:clamp(2.8rem,10vw,5.2rem);font-weight:400;line-height:.92;letter-spacing:.005em;text-transform:uppercase;max-width:14ch}
-.loc{margin-top:14px;font-size:1rem;color:rgba(255,255,255,.85);font-weight:600}
-.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:22px}
+h1{font-family:'Anton','Archivo',sans-serif;font-size:clamp(2.8rem,10vw,5.4rem);font-weight:400;line-height:.92;letter-spacing:.005em;text-transform:uppercase}
+.kicker{margin-top:14px;font-size:.8rem;letter-spacing:.22em;text-transform:uppercase;font-weight:700;color:#9fe0b8}
+.loc{margin-top:8px;font-size:1rem;color:rgba(255,255,255,.85);font-weight:600}
+.chips{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin-top:16px}
 .chip{background:rgba(255,255,255,.13);backdrop-filter:blur(4px);border:1px solid rgba(255,255,255,.25);border-radius:999px;padding:8px 15px;font-size:.85rem;font-weight:600}
-.hero-note{margin-top:16px;font-size:.82rem;color:rgba(255,255,255,.72)}
+.hero-note{margin-top:16px;font-size:.9rem;color:rgba(255,255,255,.82);max-width:56ch;font-style:italic}
 
 /* ===== Day nav ===== */
 .daynav{position:sticky;top:0;z-index:10;background:rgba(250,250,247,.93);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
@@ -147,12 +155,18 @@ footer b{color:var(--ink)}
   <img class="hero-img" id="hero-img" alt="">
   <div class="hero-overlay"></div>
   <div class="wrap hero-content">
-    <div class="kicker" id="kicker"></div>
-    <img class="hero-logo" id="logo" alt="" hidden>
-    <h1 id="nosaukums"></h1>
-    <div class="loc" id="vieta"></div>
-    <div class="chips" id="grupas"></div>
-    <p class="hero-note" id="piezime"></p>
+    <div class="hero-top">
+      <div class="brand" id="brand" hidden></div>
+      <div class="hero-meta" id="hero-meta" hidden></div>
+    </div>
+    <div class="hero-center">
+      <img class="hero-logo" id="logo" alt="" hidden>
+      <h1 id="nosaukums"></h1>
+      <div class="kicker" id="kicker"></div>
+      <div class="loc" id="vieta"></div>
+      <div class="chips" id="grupas"></div>
+      <p class="hero-note" id="piezime"></p>
+    </div>
   </div>
 </header>
 
@@ -215,6 +229,27 @@ function renderStatic(){
     heroImg.style.display = 'none';
   }
   document.getElementById('kicker').textContent = C.datumi || '';
+
+  // Zīmols augšā pa kreisi (vārdi katrs savā rindā kā plakātā)
+  const brand = document.getElementById('brand');
+  if (C.brends) {
+    brand.innerHTML = esc(C.brends).replace(/\s+/g, '<br>');
+    brand.hidden = false;
+  } else { brand.hidden = true; }
+
+  // Sadaļa + gads augšā pa labi (gadu 2026 sadala 20 / 26 kā plakātā)
+  const meta = document.getElementById('hero-meta');
+  let metaHtml = '';
+  if (C.apaksvirsraksts) metaHtml += '<span class="sub">' + esc(C.apaksvirsraksts) + '</span>';
+  if (C.gads) {
+    const g = esc(String(C.gads));
+    metaHtml += '<span class="year">' + (g.length === 4
+      ? '<span>' + g.slice(0, 2) + '</span><span>' + g.slice(2) + '</span>'
+      : '<span>' + g + '</span>') + '</span>';
+  }
+  meta.innerHTML = metaHtml;
+  meta.hidden = !metaHtml;
+
   const logo = document.getElementById('logo');
   if (C.logo) {
     logo.onerror = () => { logo.hidden = true; };
