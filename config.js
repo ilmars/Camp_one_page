@@ -79,7 +79,7 @@ const CONFIG = {
     },
     {
       "virsraksts": "Jaunieši (no 12 g.)",
-      "apraksts": "Jauniešiem ir sava programma ar slavēšanu, sarunām par dzīvi un ticību, sportu un vakara aktivitātēm. Dievkalpojumu laikā jaunieši pulcējas atsevišķi, bet ēdienreizēs un brīvajā laikā visi ir kopā ar ģimenēm."
+      "apraksts": "Jauniešiem ir sava programma ar slavēšanu, sarunām par dzīvi un ticību, sportu un  aktivitātēm. Dievkalpojumu laikā jaunieši pulcējas lielajā zālē."
     }
   ],
 
