@@ -16,7 +16,7 @@ const CONFIG = {
    * nosaukums tāpat paliks lapas cilnē un kājenē.
    * Ar "heroVirsraksts" vari hero zonā rādīt arī citu tekstu nekā "nosaukums". */
   "logo": "",
-  "heroVirsraksts": "Aspolītā zeme",
+  "heroVirsraksts": "Apsolītā zeme",
 
   /* Grupu žetoni lapas augšā */
   // "grupas": ["Pieaugušie", "Jaunieši (no 12 g.)", "Svētdienas skola (3–11 g.)"],
@@ -78,13 +78,13 @@ const CONFIG = {
       "apraksts": "Kamēr pieaugušie ir dievkalpojumā, bērni savā programmā mācās Bībeles stāstus, dzied, spēlējas un darbojas radošajās darbnīcās. Bērnus sagaida pieredzējuši svētdienas skolas skolotāji. Bērni pulcējas pirms katra rīta un vakara dievkalpojuma."
     },
     {
-      "virsraksts": "Jaunieši (no 12 g.)",
+      "virsraksts": "Jaunieši (12–18 g.)",
       "apraksts": "Jauniešiem ir sava programma ar slavēšanu, sarunām par dzīvi un ticību, sportu un  aktivitātēm. Dievkalpojumu laikā jaunieši pulcējas lielajā zālē."
     }
   ],
 
   /* ===== Bildes ===== */
-  "heroBilde": "header.jpg",
+  "heroBilde": "header_1.jpg",
   "galerijasVirsraksts": "Mirkļi no nometnes",
   "galerija": [
     "TH1.jpg",
