@@ -318,13 +318,11 @@ function renderStatic(){
   const lokacijas = C.lokacijas || [];
   document.getElementById('karte-sec').hidden = !lokacijas.length;
   document.getElementById('karte-virsraksts').textContent = C.karteVirsraksts || '';
-  document.getElementById('loc-links').innerHTML = lokacijas.map(l => {
-    const href = l.links || (Array.isArray(l.koord)
-      ? 'https://www.google.com/maps?q=' + l.koord[0] + ',' + l.koord[1]
-      : 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(l.nosaukums || ''));
-    return '<a href="' + esc(href) + '" target="_blank" rel="noopener">' +
-      '<svg class="icon"><use href="#i-pin"/></svg>' + esc(l.nosaukums || '') + '</a>';
-  }).join('');
+  // Pogas zem kartes — klikšķis izceļ marķieri kartē (Google Maps atveras no marķiera lodziņa)
+  document.getElementById('loc-links').innerHTML = lokacijas.map(l =>
+    '<a class="loc-anchor" href="#karte-sec" data-loc="' + esc(l.nosaukums || '') + '">' +
+    '<svg class="icon"><use href="#i-pin"/></svg>' + esc(l.nosaukums || '') + '</a>'
+  ).join('');
 
   // Kontaktu sadaļu rāda tikai tad, ja ir kontakti
   const kontakti = C.kontakti || [];
