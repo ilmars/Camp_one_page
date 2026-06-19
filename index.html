@@ -13,6 +13,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <!-- Brandbook fonti: Archivo (virsraksti) + Work Sans (teksts) -->
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@600;700&family=Archivo:wght@600;700;800;900&family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <style>
 :root{
   --bg:#fafaf7;
@@ -122,6 +123,14 @@ h1{font-family:'Oswald','Archivo',sans-serif;font-size:clamp(2.8rem,10vw,5.2rem)
 .contact--main a:hover{color:#fff;text-decoration:underline}
 .contact--main .role-wrap{display:flex;flex-direction:column}
 
+/* ===== Karte ===== */
+#karte{position:relative;z-index:0;height:380px;border-radius:14px;overflow:hidden;box-shadow:var(--shadow);background:#e3e8e1}
+.loc-links{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.loc-links a{display:inline-flex;align-items:center;gap:6px;background:var(--card);border:1px solid var(--line);border-radius:999px;padding:7px 14px;font-size:.85rem;font-weight:600;color:var(--ink);text-decoration:none}
+.loc-links a:hover{border-color:var(--accent);color:var(--accent)}
+.loc-links a .icon{color:var(--accent)}
+.leaflet-container a{color:var(--accent)}
+
 /* ===== Footer ===== */
 footer{padding:34px 0 44px;text-align:center;color:var(--muted);font-size:.82rem}
 footer b{color:var(--ink)}
@@ -173,6 +182,12 @@ footer b{color:var(--ink)}
   <a class="more-link" id="foto-saite" href="#"><svg class="icon"><use href="#i-camera"/></svg> <span id="foto-saites-teksts"></span> <svg class="icon"><use href="#i-arrow"/></svg></a>
 </section>
 
+<section class="wrap sec" id="karte-sec" hidden>
+  <h2 id="karte-virsraksts"></h2>
+  <div id="karte"></div>
+  <div class="loc-links" id="loc-links"></div>
+</section>
+
 <section class="wrap sec" id="kontakti-sec">
   <h2 id="kontaktu-virsraksts"></h2>
   <div class="contacts" id="kontakti"></div>
@@ -183,6 +198,7 @@ footer b{color:var(--ink)}
 </footer>
 
 <!-- Visa aizpildāmā informācija un teksti ir failā config.js -->
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="config.js"></script>
 <script>
 const C = (typeof CONFIG !== 'undefined') ? CONFIG : {};
@@ -253,6 +269,18 @@ function renderStatic(){
   fotoSaite.hidden = !irAlbums;
   fotoSaite.href = irAlbums ? C.fotoAlbumaSaite : '#';
   document.getElementById('foto-saites-teksts').textContent = C.fotoSaitesTeksts || '';
+
+  // Kartes sadaļa — lokāciju saraksts (vienmēr), karti zīmē initMap()
+  const lokacijas = C.lokacijas || [];
+  document.getElementById('karte-sec').hidden = !lokacijas.length;
+  document.getElementById('karte-virsraksts').textContent = C.karteVirsraksts || '';
+  document.getElementById('loc-links').innerHTML = lokacijas.map(l => {
+    const href = l.links || (Array.isArray(l.koord)
+      ? 'https://www.google.com/maps?q=' + l.koord[0] + ',' + l.koord[1]
+      : 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(l.nosaukums || ''));
+    return '<a href="' + esc(href) + '" target="_blank" rel="noopener">' +
+      '<svg class="icon"><use href="#i-pin"/></svg>' + esc(l.nosaukums || '') + '</a>';
+  }).join('');
 
   // Kontaktu sadaļu rāda tikai tad, ja ir kontakti
   const kontakti = C.kontakti || [];
@@ -514,8 +542,30 @@ async function loadCsv(url){
   return false;
 }
 
+function initMap(){
+  if (typeof L === 'undefined') return; // Leaflet nav ielādēts (piem., nav interneta)
+  const lokacijas = (C.lokacijas || []).filter(l => Array.isArray(l.koord) && l.koord.length === 2);
+  if (!lokacijas.length) return;
+  const map = L.map('karte', {scrollWheelZoom: false});
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19, attribution: '&copy; OpenStreetMap'
+  }).addTo(map);
+  const markers = lokacijas.map(l => {
+    const href = l.links || ('https://www.google.com/maps?q=' + l.koord[0] + ',' + l.koord[1]);
+    return L.marker(l.koord).addTo(map).bindPopup(
+      '<b>' + esc(l.nosaukums || '') + '</b>' + (l.apraksts ? '<br>' + esc(l.apraksts) : '') +
+      '<br><a href="' + esc(href) + '" target="_blank" rel="noopener">Atvērt kartē</a>');
+  });
+  if (markers.length > 1) {
+    map.fitBounds(L.featureGroup(markers).getBounds().pad(0.3));
+  } else {
+    map.setView(lokacijas[0].koord, C.karteTuvinajums || 15);
+  }
+}
+
 async function init(){
   renderStatic();
+  initMap();
   // Uzreiz rāda iebūvēto plānu, lai lapa nekad nestāv tukša...
   renderNav();
   autoSelect();

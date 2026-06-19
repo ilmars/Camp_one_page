@@ -107,6 +107,24 @@ const CONFIG = {
     { "loma": "Medmāsa",                "vards": "Iveta Ivaško", "telefons": "+371 25 139 820" }
   ],
 
+  /* ===== Karte =====
+   * Iebūvēta OpenStreetMap karte ar lokāciju marķieriem.
+   * Koordinātes: Google Maps → labais klikšķis uz vietas → augšā uzklikšķini
+   * uz cipariem (lat, lng), tie nokopējas; ieliec tos "koord": [lat, lng].
+   * "links" (neobligāts): ja norādīts, marķiera un saraksta saite ved uz to;
+   * citādi automātiski uz Google Maps pēc koordinātēm.
+   * "apraksts" (neobligāts): teksts marķiera lodziņā.
+   * Ja "lokacijas" tukšs, visa kartes sadaļa pazūd.
+   * UZMANĪBU: zemāk ir PARAUGA koordinātes — aizvieto ar īstajām! */
+  "karteVirsraksts": "Nometnes karte",
+  "karteTuvinajums": 16,
+  "lokacijas": [
+    { "nosaukums": "Lielā telts",     "koord": [56.9496, 24.6019] },
+    { "nosaukums": "Ēdamzāle",        "koord": [56.9501, 24.6028] },
+    { "nosaukums": "Dāvida nams",     "koord": [56.9489, 24.6011] },
+    { "nosaukums": "Futbola laukums", "koord": [56.9508, 24.6035] }
+  ],
+
   /* ===== Kājene (nosaukums tiek pielikts automātiski priekšā) ===== */
   "kajene": "22.–27. jūnijs, Norkalni | Dieva Mājas 2026"
 };
