@@ -114,6 +114,13 @@ h1{font-size:clamp(2.3rem,7vw,3.8rem);font-weight:900;line-height:1.05;letter-sp
 .contact b{display:block;font-size:.95rem}
 .contact a{display:inline-flex;align-items:center;gap:6px;margin-top:5px;color:var(--muted);font-size:.85rem;text-decoration:none}
 .contact a:hover{color:var(--accent)}
+/* Izcelts kontakts — pilna platuma josla akcenta krāsā */
+.contact--main{grid-column:1/-1;background:var(--accent);color:#fff;display:flex;flex-wrap:wrap;align-items:center;gap:4px 20px}
+.contact--main .role{color:rgba(255,255,255,.8);margin-bottom:0}
+.contact--main b{font-size:1rem}
+.contact--main a{margin-top:0;color:#fff;font-size:1.1rem;font-weight:800}
+.contact--main a:hover{color:#fff;text-decoration:underline}
+.contact--main .role-wrap{display:flex;flex-direction:column}
 
 /* ===== Footer ===== */
 footer{padding:34px 0 44px;text-align:center;color:var(--muted);font-size:.82rem}
@@ -251,10 +258,17 @@ function renderStatic(){
   const kontakti = C.kontakti || [];
   document.getElementById('kontakti-sec').hidden = !kontakti.length;
   document.getElementById('kontaktu-virsraksts').textContent = C.kontaktuVirsraksts || '';
-  document.getElementById('kontakti').innerHTML = kontakti.map(k =>
-    '<div class="contact"><span class="role">' + esc(k.loma) + '</span><b>' + esc(k.vards) + '</b>' +
-    '<a href="tel:' + esc((k.telefons || '').replace(/\s/g, '')) + '"><svg class="icon"><use href="#i-phone"/></svg> ' + esc(k.telefons) + '</a></div>'
-  ).join('');
+  document.getElementById('kontakti').innerHTML = kontakti.map(k => {
+    const cls = 'contact' + (k.izcelts ? ' contact--main' : '');
+    const role = k.loma ? '<span class="role">' + esc(k.loma) + '</span>' : '';
+    const vards = k.vards ? '<b>' + esc(k.vards) + '</b>' : '';
+    const tel = k.telefons ? '<a href="tel:' + esc(k.telefons.replace(/\s/g, '')) +
+      '"><svg class="icon"><use href="#i-phone"/></svg> ' + esc(k.telefons) + '</a>' : '';
+    // Izceltajam: lomu un vārdu liek vienā blokā, telefons blakus liels
+    return k.izcelts
+      ? '<div class="' + cls + '"><span class="role-wrap">' + role + vards + '</span>' + tel + '</div>'
+      : '<div class="' + cls + '">' + role + vards + tel + '</div>';
+  }).join('');
 
   document.getElementById('kajene').innerHTML = '<b>' + esc(C.nosaukums || '') + '</b>' +
     (C.kajene ? ' · ' + esc(C.kajene) : '');

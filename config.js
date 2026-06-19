@@ -94,10 +94,12 @@ const CONFIG = {
   "fotoSaitesTeksts": "Visas nometnes bildes",
   "fotoAlbumaSaite": "#",
 
-  /* ===== Kontakti ===== */
+  /* ===== Kontakti =====
+   * Var pievienot/dzēst neierobežotu skaitu. "izcelts": true padara kontaktu
+   * par izceltu pilna platuma joslu (akcenta krāsā) — der galvenajam numuram. */
   "kontaktuVirsraksts": "Kontakti",
   "kontakti": [
-    { "loma": "Nometnes jautājumi",      "vards": "aaa", "telefons": "+371 20 000 000" },
+    { "loma": "Nometnes jautājumi",      "vards": "", "telefons": "+371 20 000 000", "izcelts": true },
     { "loma": "Nometnes vadītājs",      "vards": "Kristaps Āboltiņš", "telefons": "+371 29 966 307" },
     { "loma": "Svētdienas skola",       "vards": "Ilmārs Lazdiņš", "telefons": "+371 26 667 647" },
     { "loma": "Jaunieši",               "vards": "Alesha Nutter", "telefons": "+371 27 542 001" },
