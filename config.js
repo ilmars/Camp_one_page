@@ -16,13 +16,7 @@ const CONFIG = {
    * nosaukums tāpat paliks lapas cilnē un kājenē.
    * Ar "heroVirsraksts" vari hero zonā rādīt arī citu tekstu nekā "nosaukums". */
   "logo": "",
-  "heroVirsraksts": "Apsolītā zeme",
-
-  /* Hero augšējā rinda (kā plakātā): zīmols pa kreisi, sadaļa + gads pa labi.
-   * Tukšs lauks = nerāda. Gadu (4 cipari) automātiski sadala 20 / 26. */
-  "brends": "Dieva Mājas",
-  "apaksvirsraksts": "Sadraudzības nedēļa",
-  "gads": "2026",
+  "heroVirsraksts": "Aspolītā zeme",
 
   /* Grupu žetoni lapas augšā */
   // "grupas": ["Pieaugušie", "Jaunieši (no 12 g.)", "Svētdienas skola (3–11 g.)"],
@@ -90,7 +84,7 @@ const CONFIG = {
   ],
 
   /* ===== Bildes ===== */
-  "heroBilde": "header_1.jpg",
+  "heroBilde": "header.jpg",
   "galerijasVirsraksts": "Mirkļi no nometnes",
   "galerija": [
     "TH1.jpg",
