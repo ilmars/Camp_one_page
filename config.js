@@ -123,7 +123,11 @@ const CONFIG = {
     { "nosaukums": "Ēdnīca",               "koord": [56.95593582869828, 24.58627823657708] },
     { "nosaukums": "Jauniešu zāle",        "koord": [56.95604952651114, 24.586614540715505] },
     { "nosaukums": "Dāvida nams (1. stāvs)","koord": [56.95561363333486, 24.58823491286611] },
-    { "nosaukums": "Mājiņas",              "koord": [56.95551876368299, 24.586149086409307] }
+    { "nosaukums": "Mājiņas",              "koord": [56.95551876368299, 24.586149086409307] },
+    { "nosaukums": "Futbola laukums",      "koord": [56.957438891308335, 24.587798430324003] },
+    { "nosaukums": "Reģistratūra",         "koord": [56.95597304231187, 24.58653568257369] },
+    { "nosaukums": "Baltā māja",           "koord": [56.95593798867099, 24.58676419868489] },
+    { "nosaukums": "Pirts",                "koord": [56.95564964636889, 24.588171253372536] }
   ],
 
   /* ===== Kājene (nosaukums tiek pielikts automātiski priekšā) ===== */

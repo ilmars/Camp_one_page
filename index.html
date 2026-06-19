@@ -254,13 +254,18 @@ function matchLokacija(text){
   return bestScore >= 0.6 ? best : null;
 }
 
-// Vietas elements — saite uz karti, ja atbilst kādai lokācijai; citādi parasts teksts
+// Vietas elements — saite, ko nospiežot atveras Google Maps, ja vieta atbilst
+// kādai kartes lokācijai; citādi parasts teksts.
 function vietaEl(text, baseClass){
   const inner = '<svg class="icon"><use href="#i-pin"/></svg>' + esc(text);
   const m = matchLokacija(text);
-  return m
-    ? '<a class="' + baseClass + ' loc-anchor" href="#karte-sec" data-loc="' + esc(m.nosaukums) + '">' + inner + '</a>'
-    : '<span class="' + baseClass + '">' + inner + '</span>';
+  if (m) {
+    const href = m.links || (Array.isArray(m.koord)
+      ? 'https://www.google.com/maps?q=' + m.koord[0] + ',' + m.koord[1] : '');
+    if (href) return '<a class="' + baseClass + ' loc-anchor" href="' + esc(href) +
+      '" target="_blank" rel="noopener">' + inner + '</a>';
+  }
+  return '<span class="' + baseClass + '">' + inner + '</span>';
 }
 
 /* ===== Statiskās sadaļas no konfigurācijas ===== */
@@ -586,7 +591,6 @@ async function loadCsv(url){
 }
 
 let MAP = null;
-const MARKERS = {}; // normLoc(nosaukums) -> marker, lai saites var atvērt pareizo
 
 function initMap(){
   if (typeof L === 'undefined') return; // Leaflet nav ielādēts (piem., nav interneta)
@@ -601,7 +605,6 @@ function initMap(){
     const m = L.marker(l.koord).addTo(MAP).bindPopup(
       '<b>' + esc(l.nosaukums || '') + '</b>' + (l.apraksts ? '<br>' + esc(l.apraksts) : '') +
       '<br><a href="' + esc(href) + '" target="_blank" rel="noopener">Atvērt kartē</a>');
-    MARKERS[normLoc(l.nosaukums)] = m;
     return m;
   });
   if (markers.length > 1) {
@@ -615,21 +618,6 @@ function map_fit(markers){
   MAP.fitBounds(L.featureGroup(markers).getBounds().pad(0.3));
 }
 
-// Klikšķis uz vietas saites grafikā: ritina uz karti un atver attiecīgo marķieri
-function openLokacija(nosaukums){
-  const sec = document.getElementById('karte-sec');
-  if (sec) sec.scrollIntoView({behavior: 'smooth', block: 'start'});
-  const m = MARKERS[normLoc(nosaukums)];
-  if (m && MAP) {
-    setTimeout(() => { MAP.invalidateSize(); m.openPopup(); }, 500);
-  }
-}
-document.addEventListener('click', e => {
-  const a = e.target.closest('.loc-anchor');
-  if (!a) return;
-  e.preventDefault();
-  openLokacija(a.dataset.loc);
-});
 
 async function init(){
   renderStatic();
