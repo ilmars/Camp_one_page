@@ -324,10 +324,14 @@ function eventType(s){
 }
 
 // Grupas kartītes virsraksts no Veids kolonnas teksta:
-// "Dienas aktivitātes" -> kā rakstīts; vienkāršs "Aktivitāte(s)" vai tukšs -> "Dienas aktivitātes"
-function aktTitle(veidsRaw){
+// konkrēts teksts ("Vakara aktivitātes") -> kā rakstīts; vienkāršs "Aktivitāte(s)"
+// vai tukšs -> pēc laika: vēlu (>=21:00) "Nakts aktivitātes", citādi "Dienas aktivitātes".
+function aktTitle(veidsRaw, laiks){
   const raw = (veidsRaw || '').trim();
-  if (!raw || /^aktivit(ā|a)te(s)?$/i.test(raw)) return 'Dienas aktivitātes';
+  if (!raw || /^aktivit(ā|a)te(s)?$/i.test(raw)) {
+    const h = parseInt(laiks, 10);
+    return (h >= 21 || h < 5) ? 'Nakts aktivitātes' : 'Dienas aktivitātes';
+  }
   return raw.charAt(0).toUpperCase() + raw.slice(1);
 }
 
@@ -373,7 +377,7 @@ function buildDays(rows){
       const key = laiks + '|' + veidsRaw.toLowerCase();
       let ev = day.events.find(e => e.cats && e.gkey === key);
       if (!ev) {
-        ev = {time: laiks, title: aktTitle(veidsRaw), cats: [], type: 'aktivitate', gkey: key};
+        ev = {time: laiks, title: aktTitle(veidsRaw, laiks), cats: [], type: 'aktivitate', gkey: key};
         day.events.push(ev);
       }
       if (grupa && !/paral/i.test(grupa)) {
