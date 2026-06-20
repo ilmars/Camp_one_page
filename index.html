@@ -31,6 +31,7 @@ body{background:var(--bg);color:var(--ink);font-family:'Work Sans',system-ui,-ap
 h1,h2,h3,.kicker,.time,.daypill{font-family:'Archivo','Work Sans',system-ui,sans-serif}
 .wrap{max-width:760px;margin:0 auto;padding:0 20px}
 .icon{width:1em;height:1em;vertical-align:-.12em;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.icon.wa{fill:currentColor;stroke:none}
 
 /* ===== Hero ===== */
 .hero{position:relative;overflow:hidden;background:#16301f}
@@ -121,12 +122,20 @@ a.cat-vieta{color:#85857c}
 .contact b{display:block;font-size:.95rem}
 .contact a{display:inline-flex;align-items:center;gap:6px;margin-top:5px;color:var(--muted);font-size:.85rem;text-decoration:none}
 .contact a:hover{color:var(--accent)}
+.contact-actions{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.contact-actions a{margin-top:5px}
+.contact-actions .c-wa{color:#25D366;font-size:1.15rem}
+.contact-actions .c-wa:hover{color:#1da851}
+.wa-grupa{display:flex;align-items:center;justify-content:center;gap:10px;margin-top:12px;background:#25D366;color:#fff;border-radius:14px;padding:14px 18px;font-weight:700;font-size:.95rem;text-decoration:none}
+.wa-grupa:hover{background:#1da851}
+.wa-grupa .icon{width:1.25em;height:1.25em}
 /* Izcelts kontakts — pilna platuma josla akcenta krāsā */
 .contact--main{grid-column:1/-1;background:var(--accent);color:#fff;display:flex;flex-wrap:wrap;align-items:center;gap:4px 20px}
 .contact--main .role{color:rgba(255,255,255,.8);margin-bottom:0}
 .contact--main b{font-size:1rem}
 .contact--main a{margin-top:0;color:#fff;font-size:1.1rem;font-weight:800}
 .contact--main a:hover{color:#fff;text-decoration:underline}
+.contact--main .contact-actions .c-wa{color:#fff;font-size:1.25rem}
 .contact--main .role-wrap{display:flex;flex-direction:column}
 
 /* ===== Karte ===== */
@@ -143,6 +152,11 @@ footer b{color:var(--ink)}
 
 @media (max-width:480px){
   .hero-content{padding:64px 0 40px}
+  .wrap{padding:0 12px}
+  .event{padding:14px 14px;gap:12px}
+  .time{min-width:46px}
+  .cats{grid-template-columns:1fr 1fr;gap:6px}
+  .cat{padding:8px 10px}
   .gallery{grid-template-columns:1fr 1fr}
   .gallery img:last-child{display:none}
 }
@@ -156,6 +170,7 @@ footer b{color:var(--ink)}
   <symbol id="i-camera" viewBox="0 0 24 24"><path d="M4 8h3l2-3h6l2 3h3v11H4Z"/><circle cx="12" cy="13" r="3.2"/></symbol>
   <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
   <symbol id="i-play" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M10 9l6 3-6 3Z"/></symbol>
+  <symbol id="i-whatsapp" viewBox="0 0 24 24"><path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2 22l5.25-1.38c1.45.79 3.08 1.21 4.79 1.21 5.46 0 9.91-4.45 9.91-9.91S17.5 2 12.04 2zm5.8 14.01c-.24.68-1.42 1.31-1.96 1.36-.5.05-1.13.27-3.8-.79-3.2-1.26-5.24-4.5-5.4-4.71-.16-.21-1.3-1.72-1.3-3.28s.82-2.33 1.11-2.65c.29-.32.63-.4.84-.4.21 0 .42 0 .6.01.19.01.45-.07.7.54.24.6.82 2.07.89 2.22.07.15.12.32.02.53-.1.21-.15.32-.29.5-.15.18-.31.4-.44.53-.15.15-.3.31-.13.6.17.29.76 1.25 1.63 2.02 1.12.99 2.06 1.3 2.35 1.45.29.15.46.13.63-.08.17-.21.73-.85.92-1.14.19-.29.39-.24.65-.15.27.1 1.71.81 2 .96.29.15.49.22.56.34.07.12.07.7-.17 1.38z"/></symbol>
 </svg>
 
 <header class="hero">
@@ -197,6 +212,9 @@ footer b{color:var(--ink)}
 <section class="wrap sec" id="kontakti-sec">
   <h2 id="kontaktu-virsraksts"></h2>
   <div class="contacts" id="kontakti"></div>
+  <a class="wa-grupa" id="wa-grupa" target="_blank" rel="noopener" hidden>
+    <svg class="icon wa"><use href="#i-whatsapp"/></svg> <span id="wa-grupa-teksts"></span>
+  </a>
 </section>
 
 <footer>
@@ -333,13 +351,27 @@ function renderStatic(){
     const cls = 'contact' + (k.izcelts ? ' contact--main' : '');
     const role = k.loma ? '<span class="role">' + esc(k.loma) + '</span>' : '';
     const vards = k.vards ? '<b>' + esc(k.vards) + '</b>' : '';
-    const tel = k.telefons ? '<a href="tel:' + esc(k.telefons.replace(/\s/g, '')) +
+    const digits = (k.telefons || '').replace(/[^0-9]/g, '');
+    const call = k.telefons ? '<a class="c-call" href="tel:' + esc(k.telefons.replace(/\s/g, '')) +
       '"><svg class="icon"><use href="#i-phone"/></svg> ' + esc(k.telefons) + '</a>' : '';
+    // WhatsApp ikona pie numura (var izslēgt ar "whatsapp": false)
+    const wa = (k.telefons && k.whatsapp !== false && digits)
+      ? '<a class="c-wa" href="https://wa.me/' + digits + '" target="_blank" rel="noopener" aria-label="WhatsApp">' +
+        '<svg class="icon wa"><use href="#i-whatsapp"/></svg></a>' : '';
+    const tel = (call || wa) ? '<div class="contact-actions">' + call + wa + '</div>' : '';
     // Izceltajam: lomu un vārdu liek vienā blokā, telefons blakus liels
     return k.izcelts
       ? '<div class="' + cls + '"><span class="role-wrap">' + role + vards + '</span>' + tel + '</div>'
       : '<div class="' + cls + '">' + role + vards + tel + '</div>';
   }).join('');
+
+  // WhatsApp grupas poga
+  const waGrupa = document.getElementById('wa-grupa');
+  if (C.whatsappGrupa) {
+    waGrupa.href = C.whatsappGrupa;
+    document.getElementById('wa-grupa-teksts').textContent = C.whatsappGrupaTeksts || 'Pievienojies WhatsApp grupai';
+    waGrupa.hidden = false;
+  } else { waGrupa.hidden = true; }
 
   document.getElementById('kajene').innerHTML = '<b>' + esc(C.nosaukums || '') + '</b>' +
     (C.kajene ? ' · ' + esc(C.kajene) : '');
@@ -622,7 +654,11 @@ function openLokacija(nosaukums){
   if (sec) sec.scrollIntoView({behavior: 'smooth', block: 'start'});
   const m = MARKERS[normLoc(nosaukums)];
   if (m && MAP) {
-    setTimeout(() => { MAP.invalidateSize(); m.openPopup(); }, 500);
+    setTimeout(() => {
+      MAP.invalidateSize();
+      MAP.setView(m.getLatLng(), Math.max(MAP.getZoom(), 18), {animate: true});
+      m.openPopup();
+    }, 500);
   }
 }
 document.addEventListener('click', e => {

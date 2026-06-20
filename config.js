@@ -96,7 +96,12 @@ const CONFIG = {
 
   /* ===== Kontakti =====
    * Var pievienot/dzēst neierobežotu skaitu. "izcelts": true padara kontaktu
-   * par izceltu pilna platuma joslu (akcenta krāsā) — der galvenajam numuram. */
+   * par izceltu pilna platuma joslu (akcenta krāsā) — der galvenajam numuram.
+   * Pie katra numura ir zvana ikona (tel:) un WhatsApp ikona (wa.me).
+   * WhatsApp ikonu konkrētam kontaktam var izslēgt ar "whatsapp": false.
+   * "whatsappGrupa" — kopīgais WhatsApp grupas links (poga zem kontaktiem). */
+  "whatsappGrupa": "https://chat.whatsapp.com/GQTdtQEN99NF0mNnbsRv3y?s=cl&p=i&mlu=1",
+  "whatsappGrupaTeksts": "Pievienojies nometnes WhatsApp grupai",
   "kontaktuVirsraksts": "Kontakti",
   "kontakti": [
     { "loma": "Nometnes jautājumi",      "vards": "", "telefons": "+371 20 000 000", "izcelts": true },
