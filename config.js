@@ -92,7 +92,7 @@ const CONFIG = {
     "TH3.jpg"
   ],
   "fotoSaitesTeksts": "Visas nometnes bildes",
-  "fotoAlbumaSaite": "#",
+  "fotoAlbumaSaite": "https://pie.lv/foto",
 
   /* ===== Kontakti =====
    * Var pievienot/dzēst neierobežotu skaitu. "izcelts": true padara kontaktu
