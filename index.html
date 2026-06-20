@@ -633,7 +633,8 @@ function initMap(){
     const href = l.links || ('https://www.google.com/maps?q=' + l.koord[0] + ',' + l.koord[1]);
     const m = L.marker(l.koord).addTo(MAP).bindPopup(
       '<b>' + esc(l.nosaukums || '') + '</b>' + (l.apraksts ? '<br>' + esc(l.apraksts) : '') +
-      '<br><a href="' + esc(href) + '" target="_blank" rel="noopener">Atvērt kartē</a>');
+      '<br><a href="' + esc(href) + '" target="_blank" rel="noopener">Atvērt kartē</a>',
+      {autoPan: false}); // necentrē pats — to dara openLokacija()
     MARKERS[normLoc(l.nosaukums)] = m;
     return m;
   });
@@ -656,7 +657,10 @@ function openLokacija(nosaukums){
   if (m && MAP) {
     setTimeout(() => {
       MAP.invalidateSize();
-      MAP.setView(m.getLatLng(), Math.max(MAP.getZoom(), 18), {animate: true});
+      const zoom = Math.max(MAP.getZoom(), 18);
+      // Iecentrē marķieri, tad pabīda nedaudz uz leju, lai lodziņš virs tā ir redzams
+      const pt = MAP.project(m.getLatLng(), zoom).subtract([0, 70]);
+      MAP.setView(MAP.unproject(pt, zoom), zoom, {animate: true});
       m.openPopup();
     }, 500);
   }
