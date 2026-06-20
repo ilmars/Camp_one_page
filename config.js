@@ -126,6 +126,7 @@ const CONFIG = {
   "lokacijas": [
     { "nosaukums": "Lielā telts",          "koord": [56.955619803932635, 24.589514465373902] },
     { "nosaukums": "Ēdnīca",               "koord": [56.95593582869828, 24.58627823657708] },
+    { "nosaukums": "Ēdamtelts",            "koord": [56.95582188276289, 24.586702195086453] },
     { "nosaukums": "Jauniešu zāle",        "koord": [56.95604952651114, 24.586614540715505] },
     { "nosaukums": "Ciānas nams, 1. stāvs ","koord": [56.95574961314416, 24.588189905977927] },
     { "nosaukums": "Mājiņas",              "koord": [56.95551876368299, 24.586149086409307] },
