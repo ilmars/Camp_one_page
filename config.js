@@ -114,15 +114,17 @@ const CONFIG = {
 
   /* ===== Karte =====
    * Iebūvēta OpenStreetMap karte ar lokāciju marķieriem.
-   * Koordinātes: Google Maps → labais klikšķis uz vietas → augšā uzklikšķini
-   * uz cipariem (lat, lng), tie nokopējas; ieliec tos "koord": [lat, lng].
-   * "links" (neobligāts): ja norādīts, marķiera un saraksta saite ved uz to;
-   * citādi automātiski uz Google Maps pēc koordinātēm.
-   * "apraksts" (neobligāts): teksts marķiera lodziņā.
-   * Ja "lokacijas" tukšs, visa kartes sadaļa pazūd.
-   * UZMANĪBU: zemāk ir PARAUGA koordinātes — aizvieto ar īstajām! */
+   *
+   * Lokācijas ielādē no Google izklājlapas CSV ("lokacijuCsvUrl"), ja norādīts.
+   * Izklājlapas kolonnas: Nosaukums, Lat, Lng, Active (rāda tikai Active=TRUE).
+   * Publicēšana: Fails → Kopīgot → Publicēt tīmeklī → izvēlas lapu, formāts CSV.
+   * Ja CSV nav vai neielādējas, lieto zemāk esošo "lokacijas" sarakstu (rezerve).
+   *
+   * "lokacijas" rezerves formāts: "koord": [lat, lng].
+   * Koordinātes: Google Maps → labais klikšķis → uzklikšķini uz cipariem. */
   "karteVirsraksts": "Nometnes karte",
   "karteTuvinajums": 17,
+  "lokacijuCsvUrl": "https://docs.google.com/spreadsheets/d/e/2PACX-1vRXw3iUnnLOqkK_phnID0EyDymIXJMbW7a9_dSiTvLAYwT1rEJXiSJfcRxrpFzw0dEu4PD2K-lVIb2i/pub?gid=124817012&single=true&output=csv",
   "lokacijas": [
     { "nosaukums": "Lielā telts",          "koord": [56.955619803932635, 24.589514465373902] },
     { "nosaukums": "Ēdnīca",               "koord": [56.95593582869828, 24.58627823657708] },

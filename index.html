@@ -227,6 +227,9 @@ footer b{color:var(--ink)}
 <script>
 const C = (typeof CONFIG !== 'undefined') ? CONFIG : {};
 
+// Lokācijas — sākotnēji no config (rezerve), pēc tam ielādē no CSV, ja norādīts
+let LOKACIJAS = C.lokacijas || [];
+
 const PARALLEL = C.grupas || [];
 const DAY_META = {};
 for (const [name, info] of Object.entries(C.dienas || {})) {
@@ -253,7 +256,7 @@ function normLoc(s){
 
 // Atrod kartes lokāciju, kas atbilst notikuma vietas tekstam (panes locījumus, piem. "Lielajā teltī" -> "Lielā telts")
 function matchLokacija(text){
-  const list = C.lokacijas || [];
+  const list = LOKACIJAS;
   const na = normLoc(text);
   if (!na || !list.length) return null;
   const wa = na.split(' ').filter(Boolean);
@@ -332,16 +335,6 @@ function renderStatic(){
   fotoSaite.hidden = !irAlbums;
   fotoSaite.href = irAlbums ? C.fotoAlbumaSaite : '#';
   document.getElementById('foto-saites-teksts').textContent = C.fotoSaitesTeksts || '';
-
-  // Kartes sadaļa — lokāciju saraksts (vienmēr), karti zīmē initMap()
-  const lokacijas = C.lokacijas || [];
-  document.getElementById('karte-sec').hidden = !lokacijas.length;
-  document.getElementById('karte-virsraksts').textContent = C.karteVirsraksts || '';
-  // Pogas zem kartes — klikšķis izceļ marķieri kartē (Google Maps atveras no marķiera lodziņa)
-  document.getElementById('loc-links').innerHTML = lokacijas.map(l =>
-    '<a class="loc-anchor" href="#karte-sec" data-loc="' + esc(l.nosaukums || '') + '">' +
-    '<svg class="icon"><use href="#i-pin"/></svg>' + esc(l.nosaukums || '') + '</a>'
-  ).join('');
 
   // Kontaktu sadaļu rāda tikai tad, ja ir kontakti
   const kontakti = C.kontakti || [];
@@ -618,12 +611,56 @@ async function loadCsv(url){
   return false;
 }
 
+// Lokāciju ielāde no Google Sheets CSV (kolonnas: Nosaukums, Lat, Lng, Active)
+function lokacijasFromRows(rows){
+  if (!rows.length) return [];
+  const h = rows[0].map(x => (x || '').trim().toLowerCase());
+  const iN = h.indexOf('nosaukums');
+  const iLat = Math.max(h.indexOf('lat'), h.indexOf('latitude'));
+  const iLng = Math.max(h.indexOf('lng'), h.indexOf('lon'), h.indexOf('longitude'));
+  const iAct = Math.max(h.indexOf('active'), h.indexOf('aktīvs'), h.indexOf('aktivs'));
+  if (iN < 0 || iLat < 0 || iLng < 0) return [];
+  const out = [];
+  for (const r of rows.slice(1)) {
+    const cell = i => (i >= 0 && r[i] ? r[i] : '').trim();
+    const nos = cell(iN), lat = parseFloat(cell(iLat)), lng = parseFloat(cell(iLng));
+    if (!nos || isNaN(lat) || isNaN(lng)) continue;
+    if (iAct >= 0 && cell(iAct) && !/^(true|patiess|jā|ja|1|x)$/i.test(cell(iAct))) continue;
+    out.push({nosaukums: nos, koord: [lat, lng]});
+  }
+  return out;
+}
+
+async function loadLokacijas(){
+  if (C.lokacijuCsvUrl) {
+    try {
+      const signal = (typeof AbortSignal !== 'undefined' && AbortSignal.timeout) ? AbortSignal.timeout(8000) : undefined;
+      const res = await fetch(C.lokacijuCsvUrl, {signal: signal});
+      if (res.ok) {
+        const built = lokacijasFromRows(parseCSV(await res.text()));
+        if (built.length) { LOKACIJAS = built; return; }
+      }
+    } catch (e) { /* nav pieejams — paliek config rezerve */ }
+  }
+  LOKACIJAS = C.lokacijas || [];
+}
+
+// Kartes sadaļa: lokāciju pogas + sadaļas redzamība (karti zīmē initMap)
+function renderLokacijas(){
+  document.getElementById('karte-sec').hidden = !LOKACIJAS.length;
+  document.getElementById('karte-virsraksts').textContent = C.karteVirsraksts || '';
+  document.getElementById('loc-links').innerHTML = LOKACIJAS.map(l =>
+    '<a class="loc-anchor" href="#karte-sec" data-loc="' + esc(l.nosaukums || '') + '">' +
+    '<svg class="icon"><use href="#i-pin"/></svg>' + esc(l.nosaukums || '') + '</a>'
+  ).join('');
+}
+
 let MAP = null;
 const MARKERS = {}; // normLoc(nosaukums) -> marker, lai saites var atvērt pareizo
 
 function initMap(){
   if (typeof L === 'undefined') return; // Leaflet nav ielādēts (piem., nav interneta)
-  const lokacijas = (C.lokacijas || []).filter(l => Array.isArray(l.koord) && l.koord.length === 2);
+  const lokacijas = LOKACIJAS.filter(l => Array.isArray(l.koord) && l.koord.length === 2);
   if (!lokacijas.length) return;
   MAP = L.map('karte', {scrollWheelZoom: false});
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -675,6 +712,9 @@ document.addEventListener('click', e => {
 
 async function init(){
   renderStatic();
+  // Lokācijas: ielādē no CSV (ja norādīts), tad zīmē karti un pogas
+  await loadLokacijas();
+  renderLokacijas();
   initMap();
   // Uzreiz rāda iebūvēto plānu, lai lapa nekad nestāv tukša...
   renderNav();
