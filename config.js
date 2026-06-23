@@ -108,7 +108,7 @@ const CONFIG = {
     { "loma": "Nometnes vadītājs",      "vards": "Kristaps Āboltiņš", "telefons": "+371 29 966 307" },
     { "loma": "Svētdienas skola",       "vards": "Ilmārs Lazdiņš", "telefons": "+371 26 667 647" },
     { "loma": "Jaunieši",               "vards": "Alesha Nutter", "telefons": "+371 27 542 001" },
-    { "loma": "Saimnieciskie jautājumi", "vards": "Andrejs Gūtmanis", "telefons": "+371 26 161 351" },
+    { "loma": "Saimnieciskie jautājumi", "vards": "Andrējs Gūtmanis", "telefons": "+371 26 161 351" },
     { "loma": "Medmāsa",                "vards": "Iveta Ivaško", "telefons": "+371 25 139 820" }
   ],
 
