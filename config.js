@@ -95,21 +95,19 @@ const CONFIG = {
   "fotoAlbumaSaite": "https://pie.lv/foto",
 
   /* ===== Kontakti =====
-   * Var pievienot/dzēst neierobežotu skaitu. "izcelts": true padara kontaktu
-   * par izceltu pilna platuma joslu (akcenta krāsā) — der galvenajam numuram.
+   * Kontaktus ielādē no Google izklājlapas CSV ("kontaktuCsvUrl"), ja norādīts.
+   * Izklājlapas kolonnas: Nosaukums, Vārds, numurs, Izcelt.
+   * "Izcelt"=TRUE padara kontaktu par izceltu pilna platuma joslu (akcenta krāsā).
+   * Publicēšana: Fails → Kopīgot → Publicēt tīmeklī → izvēlas lapu, formāts CSV.
+   * Ja CSV nav vai neielādējas, lieto zemāk esošo "kontakti" sarakstu (rezerve).
    * Pie katra numura ir zvana ikona (tel:) un WhatsApp ikona (wa.me).
-   * WhatsApp ikonu konkrētam kontaktam var izslēgt ar "whatsapp": false.
    * "whatsappGrupa" — kopīgais WhatsApp grupas links (poga zem kontaktiem). */
   "whatsappGrupa": "https://chat.whatsapp.com/GQTdtQEN99NF0mNnbsRv3y?s=cl&p=i&mlu=1",
   "whatsappGrupaTeksts": "Pievienojies nometnes WhatsApp grupai",
   "kontaktuVirsraksts": "Kontakti",
+  "kontaktuCsvUrl": "https://docs.google.com/spreadsheets/d/e/2PACX-1vRXw3iUnnLOqkK_phnID0EyDymIXJMbW7a9_dSiTvLAYwT1rEJXiSJfcRxrpFzw0dEu4PD2K-lVIb2i/pub?gid=1518345364&single=true&output=csv",
   "kontakti": [
-    { "loma": "Nometnes jautājumi",      "vards": "", "telefons": "+371 28 796 539", "izcelts": true },
-    { "loma": "Nometnes vadītājs",      "vards": "Kristaps Āboltiņš", "telefons": "+371 29 966 307" },
-    { "loma": "Svētdienas skola",       "vards": "Ilmārs Lazdiņš", "telefons": "+371 26 667 647" },
-    { "loma": "Jaunieši",               "vards": "Alesha Nutter", "telefons": "+371 27 542 001" },
-    { "loma": "Saimnieciskie jautājumi", "vards": "Andrējs Gūtmanis", "telefons": "+371 26 161 351" },
-    { "loma": "Medmāsa",                "vards": "Iveta Ivaško", "telefons": "+371 25 139 820" }
+    { "loma": "Nometnes jautājumi",      "vards": "", "telefons": "+371 28 796 539", "izcelts": true }
   ],
 
   /* ===== Karte =====
@@ -126,17 +124,7 @@ const CONFIG = {
   "karteTuvinajums": 17,
   "lokacijuCsvUrl": "https://docs.google.com/spreadsheets/d/e/2PACX-1vRXw3iUnnLOqkK_phnID0EyDymIXJMbW7a9_dSiTvLAYwT1rEJXiSJfcRxrpFzw0dEu4PD2K-lVIb2i/pub?gid=124817012&single=true&output=csv",
   "lokacijas": [
-    { "nosaukums": "Lielā telts",          "koord": [56.955619803932635, 24.589514465373902] },
-    { "nosaukums": "Ēdnīca",               "koord": [56.95593582869828, 24.58627823657708] },
-    { "nosaukums": "Ēdamtelts",            "koord": [56.95582188276289, 24.586702195086453] },
-    { "nosaukums": "Jauniešu zāle",        "koord": [56.95604952651114, 24.586614540715505] },
-    { "nosaukums": "Ciānas nams, 1. stāvs ","koord": [56.95574961314416, 24.588189905977927] },
-    { "nosaukums": "Mājiņas",              "koord": [56.95551876368299, 24.586149086409307] },
-    { "nosaukums": "Futbola laukums",      "koord": [56.957438891308335, 24.587798430324003] },
-    { "nosaukums": "Reģistratūra",         "koord": [56.95597304231187, 24.58653568257369] },
-    { "nosaukums": "Baltā māja",           "koord": [56.95593798867099, 24.58676419868489] },
-    { "nosaukums": "Volejbola laukums",    "koord": [56.95619017321824, 24.58727956957034] },
-    { "nosaukums": "Pirts",                "koord": [56.95564964636889, 24.588171253372536] }
+    { "nosaukums": "Lielā telts",          "koord": [56.955619803932635, 24.589514465373902] }
   ],
 
   /* ===== Kājene (nosaukums tiek pielikts automātiski priekšā) ===== */

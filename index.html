@@ -227,8 +227,9 @@ footer b{color:var(--ink)}
 <script>
 const C = (typeof CONFIG !== 'undefined') ? CONFIG : {};
 
-// Lokācijas — sākotnēji no config (rezerve), pēc tam ielādē no CSV, ja norādīts
+// Lokācijas un kontakti — sākotnēji no config (rezerve), pēc tam ielādē no CSV, ja norādīts
 let LOKACIJAS = C.lokacijas || [];
+let KONTAKTI = C.kontakti || [];
 
 const PARALLEL = C.grupas || [];
 const DAY_META = {};
@@ -335,28 +336,6 @@ function renderStatic(){
   fotoSaite.hidden = !irAlbums;
   fotoSaite.href = irAlbums ? C.fotoAlbumaSaite : '#';
   document.getElementById('foto-saites-teksts').textContent = C.fotoSaitesTeksts || '';
-
-  // Kontaktu sadaļu rāda tikai tad, ja ir kontakti
-  const kontakti = C.kontakti || [];
-  document.getElementById('kontakti-sec').hidden = !kontakti.length;
-  document.getElementById('kontaktu-virsraksts').textContent = C.kontaktuVirsraksts || '';
-  document.getElementById('kontakti').innerHTML = kontakti.map(k => {
-    const cls = 'contact' + (k.izcelts ? ' contact--main' : '');
-    const role = k.loma ? '<span class="role">' + esc(k.loma) + '</span>' : '';
-    const vards = k.vards ? '<b>' + esc(k.vards) + '</b>' : '';
-    const digits = (k.telefons || '').replace(/[^0-9]/g, '');
-    const call = k.telefons ? '<a class="c-call" href="tel:' + esc(k.telefons.replace(/\s/g, '')) +
-      '"><svg class="icon"><use href="#i-phone"/></svg> ' + esc(k.telefons) + '</a>' : '';
-    // WhatsApp ikona pie numura (var izslēgt ar "whatsapp": false)
-    const wa = (k.telefons && k.whatsapp !== false && digits)
-      ? '<a class="c-wa" href="https://wa.me/' + digits + '" target="_blank" rel="noopener" aria-label="WhatsApp">' +
-        '<svg class="icon wa"><use href="#i-whatsapp"/></svg></a>' : '';
-    const tel = (call || wa) ? '<div class="contact-actions">' + call + wa + '</div>' : '';
-    // Izceltajam: lomu un vārdu liek vienā blokā, telefons blakus liels
-    return k.izcelts
-      ? '<div class="' + cls + '"><span class="role-wrap">' + role + vards + '</span>' + tel + '</div>'
-      : '<div class="' + cls + '">' + role + vards + tel + '</div>';
-  }).join('');
 
   // WhatsApp grupas poga
   const waGrupa = document.getElementById('wa-grupa');
@@ -645,6 +624,62 @@ async function loadLokacijas(){
   LOKACIJAS = C.lokacijas || [];
 }
 
+// Kontaktu ielāde no Google Sheets CSV (kolonnas: Nosaukums, Vārds, numurs, Izcelt)
+function kontaktiFromRows(rows){
+  if (!rows.length) return [];
+  const h = rows[0].map(x => (x || '').trim().toLowerCase());
+  const iLoma = Math.max(h.indexOf('nosaukums'), h.indexOf('loma'));
+  const iVards = Math.max(h.indexOf('vārds'), h.indexOf('vards'));
+  const iTel = Math.max(h.indexOf('numurs'), h.indexOf('telefons'), h.indexOf('tālrunis'), h.indexOf('talrunis'));
+  const iIzc = Math.max(h.indexOf('izcelt'), h.indexOf('izcelts'));
+  if (iLoma < 0 && iTel < 0) return [];
+  const out = [];
+  for (const r of rows.slice(1)) {
+    const cell = i => (i >= 0 && r[i] ? r[i] : '').trim();
+    const loma = cell(iLoma), vards = cell(iVards), tel = cell(iTel);
+    if (!loma && !vards && !tel) continue;
+    const izcelts = iIzc >= 0 && /^(true|patiess|jā|ja|1|x)$/i.test(cell(iIzc));
+    out.push({loma: loma, vards: vards, telefons: tel, izcelts: izcelts});
+  }
+  return out;
+}
+
+async function loadKontakti(){
+  if (C.kontaktuCsvUrl) {
+    try {
+      const signal = (typeof AbortSignal !== 'undefined' && AbortSignal.timeout) ? AbortSignal.timeout(8000) : undefined;
+      const res = await fetch(C.kontaktuCsvUrl, {signal: signal});
+      if (res.ok) {
+        const built = kontaktiFromRows(parseCSV(await res.text()));
+        if (built.length) { KONTAKTI = built; return; }
+      }
+    } catch (e) { /* nav pieejams — paliek config rezerve */ }
+  }
+  KONTAKTI = C.kontakti || [];
+}
+
+function renderKontakti(){
+  document.getElementById('kontakti-sec').hidden = !(KONTAKTI.length || C.whatsappGrupa);
+  document.getElementById('kontaktu-virsraksts').textContent = C.kontaktuVirsraksts || '';
+  document.getElementById('kontakti').innerHTML = KONTAKTI.map(k => {
+    const cls = 'contact' + (k.izcelts ? ' contact--main' : '');
+    const role = k.loma ? '<span class="role">' + esc(k.loma) + '</span>' : '';
+    const vards = k.vards ? '<b>' + esc(k.vards) + '</b>' : '';
+    const digits = (k.telefons || '').replace(/[^0-9]/g, '');
+    const call = k.telefons ? '<a class="c-call" href="tel:' + esc(k.telefons.replace(/\s/g, '')) +
+      '"><svg class="icon"><use href="#i-phone"/></svg> ' + esc(k.telefons) + '</a>' : '';
+    // WhatsApp ikona pie numura (var izslēgt ar "whatsapp": false)
+    const wa = (k.telefons && k.whatsapp !== false && digits)
+      ? '<a class="c-wa" href="https://wa.me/' + digits + '" target="_blank" rel="noopener" aria-label="WhatsApp">' +
+        '<svg class="icon wa"><use href="#i-whatsapp"/></svg></a>' : '';
+    const tel = (call || wa) ? '<div class="contact-actions">' + call + wa + '</div>' : '';
+    // Izceltajam: lomu un vārdu liek vienā blokā, telefons blakus liels
+    return k.izcelts
+      ? '<div class="' + cls + '"><span class="role-wrap">' + role + vards + '</span>' + tel + '</div>'
+      : '<div class="' + cls + '">' + role + vards + tel + '</div>';
+  }).join('');
+}
+
 // Kartes sadaļa: lokāciju pogas + sadaļas redzamība (karti zīmē initMap)
 function renderLokacijas(){
   document.getElementById('karte-sec').hidden = !LOKACIJAS.length;
@@ -712,9 +747,10 @@ document.addEventListener('click', e => {
 
 async function init(){
   renderStatic();
-  // Lokācijas: ielādē no CSV (ja norādīts), tad zīmē karti un pogas
-  await loadLokacijas();
+  // Lokācijas un kontakti: ielādē no CSV (ja norādīts), tad attēlo
+  await Promise.all([loadLokacijas(), loadKontakti()]);
   renderLokacijas();
+  renderKontakti();
   initMap();
   // Uzreiz rāda iebūvēto plānu, lai lapa nekad nestāv tukša...
   renderNav();
