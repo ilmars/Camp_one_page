@@ -111,9 +111,25 @@ a.cat-vieta{color:#85857c}
 
 /* ===== Gallery ===== */
 .gallery{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
-.gallery img{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:14px;background:#e3e8e1;display:block}
+.gallery img{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:14px;background:#e3e8e1;display:block;cursor:zoom-in}
 .more-link{display:inline-flex;align-items:center;gap:7px;margin-top:14px;color:var(--accent);font-weight:700;font-size:.9rem;text-decoration:none}
 .more-link:hover{text-decoration:underline}
+
+/* ===== Lightbox (bildes lielajā skatā) ===== */
+.lb{position:fixed;inset:0;z-index:1000;background:rgba(10,18,12,.92);display:none;align-items:center;justify-content:center;padding:24px;cursor:zoom-out}
+.lb.open{display:flex}
+.lb img{max-width:100%;max-height:100%;border-radius:10px;box-shadow:0 8px 40px rgba(0,0,0,.5)}
+
+/* ===== Video ===== */
+.videos{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px}
+.vid{background:var(--card);border-radius:14px;box-shadow:var(--shadow);overflow:hidden}
+.vid-thumb{position:relative;display:block;width:100%;aspect-ratio:16/9;border:0;padding:0;margin:0;cursor:pointer;background:#000}
+.vid-thumb img{width:100%;height:100%;object-fit:cover;display:block}
+.vid-play{position:absolute;inset:0;display:flex;align-items:center;justify-content:center}
+.vid-play svg{transition:transform .18s ease}
+.vid-thumb:hover .vid-play svg{transform:scale(1.08)}
+.vid iframe{width:100%;aspect-ratio:16/9;display:block;border:0}
+.vid-title{padding:11px 14px;font-size:.9rem;font-weight:600;color:var(--ink)}
 
 /* ===== Contacts ===== */
 .contacts{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:10px}
@@ -158,7 +174,6 @@ footer b{color:var(--ink)}
   .cats{grid-template-columns:1fr 1fr;gap:6px}
   .cat{padding:8px 10px}
   .gallery{grid-template-columns:1fr 1fr}
-  .gallery img:last-child{display:none}
 }
 </style>
 </head>
@@ -203,6 +218,11 @@ footer b{color:var(--ink)}
   <a class="more-link" id="foto-saite" href="#"><svg class="icon"><use href="#i-camera"/></svg> <span id="foto-saites-teksts"></span> <svg class="icon"><use href="#i-arrow"/></svg></a>
 </section>
 
+<section class="wrap sec" id="video-sec" hidden>
+  <h2 id="video-virsraksts"></h2>
+  <div class="videos" id="video"></div>
+</section>
+
 <section class="wrap sec" id="karte-sec" hidden>
   <h2 id="karte-virsraksts"></h2>
   <div id="karte"></div>
@@ -221,6 +241,9 @@ footer b{color:var(--ink)}
   <div class="wrap" id="kajene"></div>
 </footer>
 
+<!-- Galerijas bildes lielajā skatā -->
+<div class="lb" id="lightbox" aria-hidden="true"><img alt=""></div>
+
 <!-- Visa aizpildāmā informācija un teksti ir failā config.js -->
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="config.js"></script>
@@ -230,6 +253,21 @@ const C = (typeof CONFIG !== 'undefined') ? CONFIG : {};
 // Lokācijas un kontakti — sākotnēji no config (rezerve), pēc tam ielādē no CSV, ja norādīts
 let LOKACIJAS = C.lokacijas || [];
 let KONTAKTI = C.kontakti || [];
+// Galerija: rezervē config saraksts (thumb==full), pēc tam ielādē no Drive
+let GALERIJA = (C.galerija || []).map(u => ({thumb: u, full: u}));
+
+// YouTube video ID no jebkuras saites formas (vai pati ID, ja jau iedota)
+function ytId(url){
+  if (!url) return '';
+  url = String(url).trim();
+  const m = url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?(?:.*&)?v=|embed\/|shorts\/|live\/|v\/))([\w-]{11})/);
+  if (m) return m[1];
+  return /^[\w-]{11}$/.test(url) ? url : '';
+}
+// Video: rezervē config saraksts, pēc tam ielādē no CSV (ja norādīts)
+let VIDEO = (C.video || [])
+  .map(v => ({virsraksts: v.virsraksts || v.nosaukums || '', id: ytId(v.youtube || v.saite || v.id || '')}))
+  .filter(v => v.id);
 
 const PARALLEL = C.grupas || [];
 const DAY_META = {};
@@ -325,17 +363,8 @@ function renderStatic(){
     progSec.hidden = true;
   }
 
-  // Galerijas sadaļu rāda tikai tad, ja ir bildes; foto saiti — tikai ja ir īsta adrese
-  const galerija = C.galerija || [];
-  document.getElementById('galerija-sec').hidden = !galerija.length;
-  document.getElementById('galerijas-virsraksts').textContent = C.galerijasVirsraksts || '';
-  document.getElementById('galerija').innerHTML = galerija.map(url =>
-    '<img src="' + esc(url) + '" alt="" onerror="this.style.visibility=\'hidden\'">').join('');
-  const fotoSaite = document.getElementById('foto-saite');
-  const irAlbums = C.fotoAlbumaSaite && C.fotoAlbumaSaite !== '#';
-  fotoSaite.hidden = !irAlbums;
-  fotoSaite.href = irAlbums ? C.fotoAlbumaSaite : '#';
-  document.getElementById('foto-saites-teksts').textContent = C.fotoSaitesTeksts || '';
+  renderGalerija();
+  renderVideo();
 
   // WhatsApp grupas poga
   const waGrupa = document.getElementById('wa-grupa');
@@ -352,15 +381,8 @@ function renderStatic(){
 /* ===== Iebūvētais dienas plāns (rezerve, ja izklājlapa nav pieejama) ===== */
 function fullDay(){
   return [
-    {time:'8:00',  title:'Rīta lūgšanas', type:'lugsanas'},
-    {time:'8:30',  title:'Brokastis', type:'edienreize'},
     {time:'10:00', title:'Rīta dievkalpojums', parallel:true, type:'dievkalpojums'},
-    {time:'13:00', title:'Pusdienas', type:'edienreize'},
-    {time:'14:00', title:'Dienas aktivitātes', type:'aktivitate', cats:[]},
-    {time:'17:30', title:'Vakariņas', type:'edienreize'},
-    {time:'18:30', title:'Vakara dievkalpojums', parallel:true, type:'dievkalpojums'},
-    {time:'22:00', title:'Naksniņas', type:'edienreize'},
-    {time:'22:30', title:'Nakts aktivitāte', type:'aktivitate'}
+    {time:'18:30', title:'Vakara dievkalpojums', parallel:true, type:'dievkalpojums'}
   ];
 }
 
@@ -680,6 +702,125 @@ function renderKontakti(){
   }).join('');
 }
 
+/* ===== Galerija ===== */
+function renderGalerija(){
+  document.getElementById('galerijas-virsraksts').textContent = C.galerijasVirsraksts || '';
+  const max = C.galerijasMax || 0;
+  const visible = max > 0 ? GALERIJA.slice(0, max) : GALERIJA;
+  document.getElementById('galerija-sec').hidden = !visible.length;
+  document.getElementById('galerija').innerHTML = visible.map(g =>
+    '<img src="' + esc(g.thumb) + '" alt="" loading="lazy" data-full="' + esc(g.full) +
+    '" onerror="this.style.visibility=\'hidden\'">').join('');
+  // Foto saiti rāda tikai tad, ja ir īsta adrese
+  const fotoSaite = document.getElementById('foto-saite');
+  const irAlbums = C.fotoAlbumaSaite && C.fotoAlbumaSaite !== '#';
+  fotoSaite.hidden = !irAlbums;
+  fotoSaite.href = irAlbums ? C.fotoAlbumaSaite : '#';
+  document.getElementById('foto-saites-teksts').textContent = C.fotoSaitesTeksts || '';
+}
+
+// Kārtošanas atslēga (senākās pirmās) pēc augšupielādes laika Drive (createdTime).
+function fotoLaiks(f){
+  if (f.createdTime) {
+    const ms = Date.parse(f.createdTime);
+    if (!isNaN(ms)) return ms;
+  }
+  return Number.MAX_SAFE_INTEGER;
+}
+
+// Galerijas bilžu ielāde no publiskas Google Drive mapes (vajag mapes ID + API atslēgu)
+async function loadGalerija(){
+  const id = C.galerijasDriveMapesId, key = C.galerijasDriveApiKey;
+  if (!id || !key) return;
+  try {
+    const q = "'" + id + "' in parents and mimeType contains 'image/' and trashed = false";
+    const url = 'https://www.googleapis.com/drive/v3/files?key=' + encodeURIComponent(key) +
+      '&q=' + encodeURIComponent(q) +
+      '&fields=files(id,name,createdTime)&orderBy=createdTime&pageSize=1000' +
+      '&supportsAllDrives=true&includeItemsFromAllDrives=true';
+    const signal = (typeof AbortSignal !== 'undefined' && AbortSignal.timeout) ? AbortSignal.timeout(8000) : undefined;
+    const res = await fetch(url, {signal: signal});
+    if (res.ok) {
+      const data = await res.json();
+      const files = (data.files || []).filter(f => f && f.id);
+      files.sort((a, b) => {
+        const ka = fotoLaiks(a), kb = fotoLaiks(b);
+        if (ka !== kb) return ka - kb;  // senākās pirmās
+        return (a.name || '').localeCompare(b.name || '', undefined, {numeric: true});
+      });
+      if (files.length) {
+        GALERIJA = files.map(f => ({
+          thumb: 'https://drive.google.com/thumbnail?id=' + f.id + '&sz=w800',
+          full:  'https://drive.google.com/thumbnail?id=' + f.id + '&sz=w1600'
+        }));
+      }
+    }
+  } catch (e) { /* nav pieejams — paliek config rezerve */ }
+}
+
+/* ===== Video ===== */
+function renderVideo(){
+  document.getElementById('video-virsraksts').textContent = C.videoVirsraksts || '';
+  document.getElementById('video-sec').hidden = !VIDEO.length;
+  document.getElementById('video').innerHTML = VIDEO.map(v =>
+    '<div class="vid">' +
+      '<button class="vid-thumb" data-id="' + esc(v.id) + '" aria-label="Atskaņot video' +
+        (v.virsraksts ? ': ' + esc(v.virsraksts) : '') + '">' +
+        '<img loading="lazy" src="https://i.ytimg.com/vi/' + esc(v.id) + '/hqdefault.jpg" alt="" ' +
+        'onerror="this.src=\'https://i.ytimg.com/vi/' + esc(v.id) + '/mqdefault.jpg\'">' +
+        '<span class="vid-play"><svg viewBox="0 0 68 48" width="64" height="46" aria-hidden="true">' +
+          '<path d="M66.5 7.7c-.8-2.9-3-5.1-5.9-5.9C55.3.5 34 .5 34 .5S12.7.5 7.4 1.8C4.5 2.6 2.3 4.8 1.5 7.7.2 13 .2 24 .2 24s0 11 1.3 16.3c.8 2.9 3 5.1 5.9 5.9C12.7 47.5 34 47.5 34 47.5s21.3 0 26.6-1.3c2.9-.8 5.1-3 5.9-5.9C67.8 35 67.8 24 67.8 24s0-11-1.3-16.3z" fill="rgba(0,0,0,.65)"/>' +
+          '<path d="M27 34l18-10-18-10z" fill="#fff"/></svg></span>' +
+      '</button>' +
+      (v.virsraksts ? '<div class="vid-title">' + esc(v.virsraksts) + '</div>' : '') +
+    '</div>'
+  ).join('');
+}
+
+// Klikšķis uz sīkbildes — aizstāj ar YouTube iframe (autoplay)
+document.addEventListener('click', e => {
+  const b = e.target.closest('.vid-thumb');
+  if (!b) return;
+  const f = document.createElement('iframe');
+  f.src = 'https://www.youtube-nocookie.com/embed/' + b.dataset.id + '?autoplay=1&rel=0';
+  f.allow = 'autoplay; encrypted-media; picture-in-picture; web-share; fullscreen';
+  f.allowFullscreen = true;
+  f.title = b.getAttribute('aria-label') || 'Video';
+  b.replaceWith(f);
+});
+
+// Video saraksta ielāde no Google Sheets CSV (kolonnas: Nosaukums, YouTube, Aktīvs)
+function videoFromRows(rows){
+  if (!rows.length) return [];
+  const h = rows[0].map(x => (x || '').trim().toLowerCase());
+  const iT = Math.max(h.indexOf('nosaukums'), h.indexOf('virsraksts'), h.indexOf('tituls'));
+  const iU = Math.max(h.indexOf('youtube'), h.indexOf('saite'), h.indexOf('links'), h.indexOf('url'), h.indexOf('video'));
+  const iA = Math.max(h.indexOf('aktīvs'), h.indexOf('aktivs'), h.indexOf('active'));
+  if (iU < 0) return [];
+  const out = [];
+  for (const r of rows.slice(1)) {
+    const cell = i => (i >= 0 && r[i] ? r[i] : '').trim();
+    const id = ytId(cell(iU));
+    if (!id) continue;
+    if (iA >= 0 && cell(iA) && !/^(true|patiess|jā|ja|1|x)$/i.test(cell(iA))) continue;
+    out.push({virsraksts: cell(iT), id: id});
+  }
+  return out;
+}
+
+async function loadVideo(){
+  if (C.videoCsvUrl) {
+    try {
+      const signal = (typeof AbortSignal !== 'undefined' && AbortSignal.timeout) ? AbortSignal.timeout(8000) : undefined;
+      const res = await fetch(C.videoCsvUrl, {signal: signal});
+      if (res.ok) {
+        const built = videoFromRows(parseCSV(await res.text()));
+        if (built.length) { VIDEO = built; }
+      }
+    } catch (e) { /* nav pieejams — paliek config rezerve */ }
+  }
+}
+
 // Kartes sadaļa: lokāciju pogas + sadaļas redzamība (karti zīmē initMap)
 function renderLokacijas(){
   document.getElementById('karte-sec').hidden = !LOKACIJAS.length;
@@ -744,13 +885,31 @@ document.addEventListener('click', e => {
   openLokacija(a.dataset.loc);
 });
 
+// Galerijas lightbox: klikšķis uz bildes to atver lielajā skatā
+const LB = document.getElementById('lightbox');
+if (LB) {
+  const lbImg = LB.querySelector('img');
+  const closeLB = () => { LB.classList.remove('open'); LB.setAttribute('aria-hidden', 'true'); lbImg.src = ''; };
+  document.getElementById('galerija').addEventListener('click', e => {
+    const img = e.target.closest('img');
+    if (!img || !img.dataset.full) return;
+    lbImg.src = img.dataset.full;
+    LB.classList.add('open');
+    LB.setAttribute('aria-hidden', 'false');
+  });
+  LB.addEventListener('click', closeLB);
+  document.addEventListener('keydown', e => { if (e.key === 'Escape' && LB.classList.contains('open')) closeLB(); });
+}
+
 
 async function init(){
   renderStatic();
   // Lokācijas un kontakti: ielādē no CSV (ja norādīts), tad attēlo
-  await Promise.all([loadLokacijas(), loadKontakti()]);
+  await Promise.all([loadLokacijas(), loadKontakti(), loadGalerija(), loadVideo()]);
   renderLokacijas();
   renderKontakti();
+  renderGalerija();
+  renderVideo();
   initMap();
   // Uzreiz rāda iebūvēto plānu, lai lapa nekad nestāv tukša...
   renderNav();

@@ -86,13 +86,52 @@ const CONFIG = {
   /* ===== Bildes ===== */
   "heroBilde": "header_1.jpg",
   "galerijasVirsraksts": "Mirkļi no nometnes",
+
+  /* Galerija AUTOMĀTISKI no Google Drive mapes.
+   * Pievieno bildi mapē → tā parādās galerijā (lapa nav jāmaina).
+   * 1) Ieliec visas bildes vienā Drive mapē.
+   * 2) Mapi padari publisku: labais klikšķis uz mapes → Kopīgot →
+   *    "Ikviens ar saiti" → loma "Skatītājs".
+   * 3) "galerijasDriveMapesId": mapes ID no mapes saites. Piem., ja saite ir
+   *    https://drive.google.com/drive/folders/1AbCdEfGhXyZ
+   *    tad ID ir daļa aiz "folders/" (1AbCdEfGhXyZ).
+   * 4) "galerijasDriveApiKey": Google API atslēga (Google Cloud Console →
+   *    APIs & Services → Credentials → API key; ar ieslēgtu "Google Drive API").
+   *    Atslēgu drīkst turēt šeit, jo to ieteicams ierobežot tikai Drive lasīšanai.
+   * Ja kāds lauks tukšs vai mape neielādējas — lieto zemāk esošo "galerija"
+   * rezerves sarakstu.
+   * "galerijasMax": cik bildes rādīt SĀKUMLAPĀ kā priekšskatījumu. Pilnā galerija
+   * ar visām bildēm ir atsevišķā lapā galerija.html (uz to ved "fotoAlbumaSaite"). */
+  "galerijasDriveMapesId": "1H4l4yK96GM358aaZgQ-9BWNQstxbtb17",
+  "galerijasDriveApiKey": "AIzaSyCTPrtTuJr3-qg4ZngjZzZQPdF04DzPhdo",
+  "galerijasMax": 6,
+
+  /* Rezerves bilžu saraksts (lieto, ja Drive nav norādīts vai nedarbojas) */
   "galerija": [
     "TH1.jpg",
     "TH2.jpg",
     "TH3.jpg"
   ],
   "fotoSaitesTeksts": "Visas nometnes bildes",
-  "fotoAlbumaSaite": "https://pie.lv/foto",
+  "fotoAlbumaSaite": "galerija.html",
+
+  /* ===== Video =====
+   * Nometnes video no YouTube. Sadaļu rāda TIKAI tad, ja ir vismaz viens video.
+   * Video atskaņojas uz vietas (iframe ielādējas pēc klikšķa uz sīkbildes).
+   *
+   * Divi veidi, kā pievienot (var lietot abus):
+   * 1) Vienkārši — zemāk esošajā "video" sarakstā. Katram: "youtube" (saite)
+   *    un neobligāts "virsraksts". Der jebkura YouTube saites forma:
+   *    https://youtu.be/XXXX , https://www.youtube.com/watch?v=XXXX , /shorts/ , /live/
+   * 2) Dinamiski no Google izklājlapas CSV ("videoCsvUrl") — pievieno rindu,
+   *    video parādās. Kolonnas: Nosaukums, YouTube, Aktīvs (rāda tikai Aktīvs=TRUE).
+   *    Publicēšana: Fails → Kopīgot → Publicēt tīmeklī → izvēlas lapu, formāts CSV.
+   *    Ja CSV norādīts un ielādējas, tas aizstāj zemāk esošo "video" sarakstu. */
+  "videoVirsraksts": "Nometnes video",
+  "videoCsvUrl": "https://docs.google.com/spreadsheets/d/e/2PACX-1vRXw3iUnnLOqkK_phnID0EyDymIXJMbW7a9_dSiTvLAYwT1rEJXiSJfcRxrpFzw0dEu4PD2K-lVIb2i/pub?gid=1536490292&single=true&output=csv",
+  "video": [
+    // { "virsraksts": "1. diena — atskats", "youtube": "https://youtu.be/XXXXXXXXXXX" }
+  ],
 
   /* ===== Kontakti =====
    * Kontaktus ielādē no Google izklājlapas CSV ("kontaktuCsvUrl"), ja norādīts.
