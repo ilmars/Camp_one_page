@@ -48,7 +48,10 @@ h1{font-family:'Archivo','Work Sans',sans-serif}
 .chip.active{background:var(--ink);color:#fff;border-color:var(--ink)}
 
 /* ===== Režģis ===== */
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px;padding:22px 0 50px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px;padding:22px 0 18px}
+.more-wrap{display:flex;justify-content:center;padding:6px 0 50px}
+.more-btn{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:999px;padding:12px 26px;font:inherit;font-size:.92rem;font-weight:700;cursor:pointer;transition:all .15s ease}
+.more-btn:hover{border-color:var(--accent);color:var(--accent)}
 .cell{border:0;margin:0;padding:0;background:#e3e8e1;border-radius:10px;overflow:hidden;cursor:zoom-in;aspect-ratio:1/1;display:block}
 .cell img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .25s ease}
 .cell:hover img{transform:scale(1.05)}
@@ -97,6 +100,7 @@ h1{font-family:'Archivo','Work Sans',sans-serif}
   <p class="status" id="status">Ielādē bildes…</p>
   <div class="filters" id="filters"></div>
   <div class="grid" id="grid"></div>
+  <div class="more-wrap"><button class="more-btn" id="more-btn" hidden></button></div>
 </main>
 
 <div class="lb" id="lightbox" aria-hidden="true">
@@ -117,9 +121,11 @@ const C = (typeof CONFIG !== 'undefined') ? CONFIG : {};
 const FOLDER = C.galerijasDriveMapesId || '';
 const KEY = C.galerijasDriveApiKey || '';
 let PHOTOS = [];     // visas: {id, name, foto, thumb, full, dl}
-let VIEW = [];       // pašlaik rādītās (pēc fotogrāfa filtra)
+let VIEW = [];       // pašlaik filtrētās (pēc fotogrāfa)
 let activeFoto = ''; // '' = visi fotogrāfi
 let idx = -1;
+const BATCH = 60;    // cik bilžu parāda uzreiz / pēc "Rādīt vairāk"
+let shown = 0;       // cik no VIEW pašlaik attēlots režģī
 
 function esc(s){
   return String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
@@ -239,15 +245,25 @@ function applyFilter(foto){
   document.getElementById('g-sub').textContent = VIEW.length + ' bildes' + (foto ? ' · ' + foto : '');
   document.querySelectorAll('#filters .chip').forEach(c =>
     c.classList.toggle('active', c.dataset.foto === foto));
-  renderGrid();
+  document.getElementById('grid').innerHTML = '';
+  shown = 0;
+  renderMore();
 }
 
-function renderGrid(){
-  document.getElementById('grid').innerHTML = VIEW.map((p, i) =>
-    '<button class="cell" data-i="' + i + '" aria-label="Atvērt bildi">' +
-    '<img loading="lazy" src="' + esc(p.thumb) + '" alt="' + esc(p.name) + '" ' +
-    'onerror="this.parentNode.style.display=\'none\'"></button>'
-  ).join('');
+// Parāda nākamās BATCH bildes (pārējās — pa pogu "Rādīt vairāk")
+function renderMore(){
+  const next = VIEW.slice(shown, shown + BATCH);
+  document.getElementById('grid').insertAdjacentHTML('beforeend', next.map((p, k) => {
+    const i = shown + k;
+    return '<button class="cell" data-i="' + i + '" aria-label="Atvērt bildi">' +
+      '<img loading="lazy" src="' + esc(p.thumb) + '" alt="' + esc(p.name) + '" ' +
+      'onerror="this.parentNode.style.display=\'none\'"></button>';
+  }).join(''));
+  shown += next.length;
+  const remaining = VIEW.length - shown;
+  const btn = document.getElementById('more-btn');
+  btn.hidden = remaining <= 0;
+  if (remaining > 0) btn.textContent = 'Rādīt vairāk (' + remaining + ')';
 }
 
 /* ===== Lightbox ===== */
@@ -282,6 +298,7 @@ document.getElementById('filters').addEventListener('click', e => {
   const c = e.target.closest('.chip');
   if (c) applyFilter(c.dataset.foto);
 });
+document.getElementById('more-btn').addEventListener('click', renderMore);
 document.getElementById('lb-close').addEventListener('click', closeLb);
 document.getElementById('lb-prev').addEventListener('click', () => navLb(-1));
 document.getElementById('lb-next').addEventListener('click', () => navLb(1));
