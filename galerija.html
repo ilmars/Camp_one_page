@@ -41,6 +41,12 @@ h1{font-family:'Archivo','Work Sans',sans-serif}
 /* ===== Statuss ===== */
 .status{padding:48px 20px;text-align:center;color:var(--muted);font-size:.95rem;max-width:560px;margin:0 auto}
 
+/* ===== Filtrs pa fotogrāfiem ===== */
+.filters{display:flex;flex-wrap:wrap;gap:8px;padding-top:20px}
+.chip{border:1px solid var(--line);background:var(--card);color:var(--muted);border-radius:999px;padding:7px 14px;font:inherit;font-size:.85rem;font-weight:600;cursor:pointer;transition:all .15s ease}
+.chip:hover{border-color:var(--accent);color:var(--accent)}
+.chip.active{background:var(--ink);color:#fff;border-color:var(--ink)}
+
 /* ===== Režģis ===== */
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px;padding:22px 0 50px}
 .cell{border:0;margin:0;padding:0;background:#e3e8e1;border-radius:10px;overflow:hidden;cursor:zoom-in;aspect-ratio:1/1;display:block}
@@ -89,6 +95,7 @@ h1{font-family:'Archivo','Work Sans',sans-serif}
 
 <main class="wrap">
   <p class="status" id="status">Ielādē bildes…</p>
+  <div class="filters" id="filters"></div>
   <div class="grid" id="grid"></div>
 </main>
 
@@ -99,6 +106,7 @@ h1{font-family:'Archivo','Work Sans',sans-serif}
   <button class="lb-btn lb-nav lb-next" id="lb-next" aria-label="Nākamā">&#8250;</button>
   <div class="lb-bar">
     <span id="lb-count"></span>
+    <span id="lb-foto"></span>
     <a class="lb-dl" id="lb-dl" target="_blank" rel="noopener"><svg class="icon"><use href="#i-download"/></svg> Lejupielādēt</a>
   </div>
 </div>
@@ -108,7 +116,9 @@ h1{font-family:'Archivo','Work Sans',sans-serif}
 const C = (typeof CONFIG !== 'undefined') ? CONFIG : {};
 const FOLDER = C.galerijasDriveMapesId || '';
 const KEY = C.galerijasDriveApiKey || '';
-let PHOTOS = [];   // {id, name, thumb, full, dl}
+let PHOTOS = [];     // visas: {id, name, foto, thumb, full, dl}
+let VIEW = [];       // pašlaik rādītās (pēc fotogrāfa filtra)
+let activeFoto = ''; // '' = visi fotogrāfi
 let idx = -1;
 
 function esc(s){
@@ -142,24 +152,44 @@ function sized(file, px){
   return 'https://drive.google.com/thumbnail?id=' + file.id + '&sz=w' + px;
 }
 
+// Vispārīga Drive failu saraksta ielāde (ar lapošanu)
+async function driveList(q, fields){
+  let out = [], token = '';
+  do {
+    const url = 'https://www.googleapis.com/drive/v3/files?key=' + encodeURIComponent(KEY) +
+      '&q=' + encodeURIComponent(q) +
+      '&fields=nextPageToken,files(' + fields + ')' +
+      '&orderBy=createdTime&pageSize=1000' +
+      '&supportsAllDrives=true&includeItemsFromAllDrives=true' +
+      (token ? '&pageToken=' + encodeURIComponent(token) : '');
+    const res = await fetch(url);
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const data = await res.json();
+    out = out.concat(data.files || []);
+    token = data.nextPageToken || '';
+  } while (token);
+  return out;
+}
+
 async function loadAll(){
   if (!FOLDER || !KEY) { showStatus('Galerija vēl nav nokonfigurēta (trūkst Drive mapes ID vai API atslēgas config.js failā).'); return; }
-  let files = [], token = '';
+  const imgF = 'id,name,thumbnailLink,createdTime';
+  const imgQ = p => "'" + p + "' in parents and mimeType contains 'image/' and trashed = false";
+  let files = [];
   try {
-    do {
-      const q = "'" + FOLDER + "' in parents and mimeType contains 'image/' and trashed = false";
-      const url = 'https://www.googleapis.com/drive/v3/files?key=' + encodeURIComponent(KEY) +
-        '&q=' + encodeURIComponent(q) +
-        '&fields=nextPageToken,files(id,name,thumbnailLink,createdTime)' +
-        '&orderBy=createdTime&pageSize=1000' +
-        '&supportsAllDrives=true&includeItemsFromAllDrives=true' +
-        (token ? '&pageToken=' + encodeURIComponent(token) : '');
-      const res = await fetch(url);
-      if (!res.ok) throw new Error('HTTP ' + res.status);
-      const data = await res.json();
-      files = files.concat(data.files || []);
-      token = data.nextPageToken || '';
-    } while (token);
+    // Apakšmapes = fotogrāfi; bildes savāc no katras, pieliekot fotogrāfa vārdu.
+    const folders = await driveList(
+      "'" + FOLDER + "' in parents and mimeType = 'application/vnd.google-apps.folder' and trashed = false", 'id,name');
+    // Bildes tieši virsmapē (ja kādas ir) — tām fotogrāfs nav zināms
+    const direct = await driveList(imgQ(FOLDER), imgF);
+    direct.forEach(f => f.foto = '');
+    // Bildes katrā apakšmapē (paralēli)
+    const perFolder = await Promise.all(folders.map(async fo => {
+      const imgs = await driveList(imgQ(fo.id), imgF);
+      imgs.forEach(f => f.foto = fo.name || '');
+      return imgs;
+    }));
+    files = direct.concat(...perFolder);
   } catch (e) {
     showStatus('Neizdevās ielādēt bildes. Pārbaudi, vai Drive mape ir publiska ("Ikviens ar saiti") un vai API atslēga ir pareiza.');
     return;
@@ -173,6 +203,7 @@ async function loadAll(){
   PHOTOS = files.map(f => ({
     id: f.id,
     name: f.name || '',
+    foto: f.foto || '',
     thumb: sized(f, 400),
     full: sized(f, 1600),
     dl: 'https://drive.google.com/uc?export=download&id=' + f.id
@@ -183,9 +214,36 @@ async function loadAll(){
 function render(){
   if (!PHOTOS.length) { showStatus('Mapē pagaidām nav bilžu.'); return; }
   statusEl.style.display = 'none';
-  document.getElementById('g-sub').textContent = PHOTOS.length + ' bildes';
-  const grid = document.getElementById('grid');
-  grid.innerHTML = PHOTOS.map((p, i) =>
+  buildChips();
+  applyFilter(activeFoto);
+}
+
+// Filtra pogas pa fotogrāfiem (apakšmapju nosaukumi)
+function buildChips(){
+  const box = document.getElementById('filters');
+  const names = [...new Set(PHOTOS.map(p => p.foto).filter(Boolean))]
+    .sort((a, b) => a.localeCompare(b, 'lv'));
+  if (!names.length) { box.innerHTML = ''; return; }
+  const chip = (label, val) =>
+    '<button class="chip" data-foto="' + esc(val) + '">' + esc(label) + '</button>';
+  let html = chip('Visi (' + PHOTOS.length + ')', '');
+  for (const n of names) {
+    html += chip(n + ' (' + PHOTOS.filter(p => p.foto === n).length + ')', n);
+  }
+  box.innerHTML = html;
+}
+
+function applyFilter(foto){
+  activeFoto = foto;
+  VIEW = foto ? PHOTOS.filter(p => p.foto === foto) : PHOTOS.slice();
+  document.getElementById('g-sub').textContent = VIEW.length + ' bildes' + (foto ? ' · ' + foto : '');
+  document.querySelectorAll('#filters .chip').forEach(c =>
+    c.classList.toggle('active', c.dataset.foto === foto));
+  renderGrid();
+}
+
+function renderGrid(){
+  document.getElementById('grid').innerHTML = VIEW.map((p, i) =>
     '<button class="cell" data-i="' + i + '" aria-label="Atvērt bildi">' +
     '<img loading="lazy" src="' + esc(p.thumb) + '" alt="' + esc(p.name) + '" ' +
     'onerror="this.parentNode.style.display=\'none\'"></button>'
@@ -199,9 +257,10 @@ const lbCount = document.getElementById('lb-count');
 const lbDl = document.getElementById('lb-dl');
 
 function showCurrent(){
-  const p = PHOTOS[idx];
+  const p = VIEW[idx];
   lbImg.src = p.full;
-  lbCount.textContent = (idx + 1) + ' / ' + PHOTOS.length;
+  lbCount.textContent = (idx + 1) + ' / ' + VIEW.length;
+  document.getElementById('lb-foto').textContent = p.foto ? 'Foto: ' + p.foto : '';
   lbDl.href = p.dl;
 }
 function openLb(i){
@@ -213,11 +272,15 @@ function closeLb(){
   lb.classList.remove('open'); lb.setAttribute('aria-hidden', 'true');
   lbImg.src = ''; document.body.style.overflow = '';
 }
-function navLb(d){ idx = (idx + d + PHOTOS.length) % PHOTOS.length; showCurrent(); }
+function navLb(d){ idx = (idx + d + VIEW.length) % VIEW.length; showCurrent(); }
 
 document.getElementById('grid').addEventListener('click', e => {
   const c = e.target.closest('.cell');
   if (c) openLb(parseInt(c.dataset.i, 10));
+});
+document.getElementById('filters').addEventListener('click', e => {
+  const c = e.target.closest('.chip');
+  if (c) applyFilter(c.dataset.foto);
 });
 document.getElementById('lb-close').addEventListener('click', closeLb);
 document.getElementById('lb-prev').addEventListener('click', () => navLb(-1));

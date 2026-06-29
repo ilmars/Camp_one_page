@@ -102,7 +102,7 @@ const CONFIG = {
    * rezerves sarakstu.
    * "galerijasMax": cik bildes rādīt SĀKUMLAPĀ kā priekšskatījumu. Pilnā galerija
    * ar visām bildēm ir atsevišķā lapā galerija.html (uz to ved "fotoAlbumaSaite"). */
-  "galerijasDriveMapesId": "1H4l4yK96GM358aaZgQ-9BWNQstxbtb17",
+  "galerijasDriveMapesId": "18CWdjI01xQV2gz4MrE6Fazku5NDCChby",
   "galerijasDriveApiKey": "AIzaSyCTPrtTuJr3-qg4ZngjZzZQPdF04DzPhdo",
   "galerijasMax": 6,
 

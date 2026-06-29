@@ -732,28 +732,30 @@ function fotoLaiks(f){
 async function loadGalerija(){
   const id = C.galerijasDriveMapesId, key = C.galerijasDriveApiKey;
   if (!id || !key) return;
-  try {
-    const q = "'" + id + "' in parents and mimeType contains 'image/' and trashed = false";
-    const url = 'https://www.googleapis.com/drive/v3/files?key=' + encodeURIComponent(key) +
-      '&q=' + encodeURIComponent(q) +
-      '&fields=files(id,name,createdTime)&orderBy=createdTime&pageSize=1000' +
-      '&supportsAllDrives=true&includeItemsFromAllDrives=true';
+  const base = 'https://www.googleapis.com/drive/v3/files?key=' + encodeURIComponent(key) +
+    '&supportsAllDrives=true&includeItemsFromAllDrives=true&pageSize=1000&orderBy=createdTime';
+  const list = async q => {
     const signal = (typeof AbortSignal !== 'undefined' && AbortSignal.timeout) ? AbortSignal.timeout(8000) : undefined;
-    const res = await fetch(url, {signal: signal});
-    if (res.ok) {
-      const data = await res.json();
-      const files = (data.files || []).filter(f => f && f.id);
-      files.sort((a, b) => {
-        const ka = fotoLaiks(a), kb = fotoLaiks(b);
-        if (ka !== kb) return ka - kb;  // senākās pirmās
-        return (a.name || '').localeCompare(b.name || '', undefined, {numeric: true});
-      });
-      if (files.length) {
-        GALERIJA = files.map(f => ({
-          thumb: 'https://drive.google.com/thumbnail?id=' + f.id + '&sz=w800',
-          full:  'https://drive.google.com/thumbnail?id=' + f.id + '&sz=w1600'
-        }));
-      }
+    const res = await fetch(base + '&q=' + encodeURIComponent(q) + '&fields=files(id,name,createdTime)', {signal: signal});
+    return res.ok ? ((await res.json()).files || []) : [];
+  };
+  const imgQ = p => "'" + p + "' in parents and mimeType contains 'image/' and trashed = false";
+  try {
+    // Bildes gan tieši virsmapē, gan visās apakšmapēs (fotogrāfu mapes)
+    const folders = await list("'" + id + "' in parents and mimeType = 'application/vnd.google-apps.folder' and trashed = false");
+    let files = await list(imgQ(id));
+    const sub = await Promise.all(folders.map(fo => list(imgQ(fo.id))));
+    files = files.concat(...sub).filter(f => f && f.id);
+    files.sort((a, b) => {
+      const ka = fotoLaiks(a), kb = fotoLaiks(b);
+      if (ka !== kb) return ka - kb;  // senākās pirmās
+      return (a.name || '').localeCompare(b.name || '', undefined, {numeric: true});
+    });
+    if (files.length) {
+      GALERIJA = files.map(f => ({
+        thumb: 'https://drive.google.com/thumbnail?id=' + f.id + '&sz=w800',
+        full:  'https://drive.google.com/thumbnail?id=' + f.id + '&sz=w1600'
+      }));
     }
   } catch (e) { /* nav pieejams — paliek config rezerve */ }
 }
